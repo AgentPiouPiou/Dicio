@@ -182,6 +182,10 @@ main{
     color:gray;
 }
 
+h1 {
+    margin-left: 20%;
+}
+
 /* ANIMATION */
 
 @keyframes fadeInUp{
