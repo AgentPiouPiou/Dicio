@@ -2,22 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Accueil</title>
+<title>Login</title>
 </head>
 <body>
 
-<h2>Accueil Dicio</h2>
+<h1>Dicio</h1>
 
-<div id="userBox" style="display:none;">
-  <img id="pp" width="40" style="border-radius:50%; cursor:pointer;">
-  <span id="name"></span>
-
-  <div id="menu" style="display:none;">
-    <button onclick="go('/profil')">Profil</button>
-    <button onclick="go('/modification')">Modifier</button>
-    <button onclick="logout()">Déconnexion</button>
-  </div>
-</div>
+<button onclick="login()">Se connecter avec Google</button>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>

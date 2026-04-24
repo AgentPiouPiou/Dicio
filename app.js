@@ -1,6 +1,7 @@
-/* =====================
+/* =========================
    UTILS
-===================== */
+========================= */
+
 function slugify(str){
   return (str || "")
     .toLowerCase()
@@ -8,16 +9,18 @@ function slugify(str){
     .replace(/[^a-z0-9]/g,"");
 }
 
-/* =====================
-   NAVIGATION SIMPLE
-===================== */
-window.go = (p) => {
-  window.location.href = "/Dicio" + p;
-};
+/* =========================
+   NAVIGATION
+========================= */
 
-/* =====================
+function go(path){
+  window.location.href = "/Dicio" + path;
+}
+
+/* =========================
    LOGIN
-===================== */
+========================= */
+
 window.login = async () => {
   const res = await auth.signInWithPopup(provider);
   const user = res.user;
@@ -34,111 +37,121 @@ window.login = async () => {
     });
   }
 
-  go("/profil");
+  go("/index.html");
 };
 
-/* =====================
+/* =========================
    LOGOUT
-===================== */
-window.logout = () => auth.signOut();
+========================= */
 
-/* =====================
-   AUTH STATE (IMPORTANT UX FIX)
-===================== */
-auth.onAuthStateChanged(user => {
+window.logout = async () => {
+  await auth.signOut();
+  go("/login.html");
+};
 
-  const login = document.getElementById("login");
-  const home = document.getElementById("home");
+/* =========================
+   AUTH CHECK (IMPORTANT)
+========================= */
 
-  if(!user){
-    if(login) login.style.display = "block";
-    if(home) home.style.display = "none";
-  } else {
-    if(login) login.style.display = "none";
-    if(home) home.style.display = "block";
+auth.onAuthStateChanged(async user => {
+
+  const path = window.location.pathname;
+
+  if(!user && !path.includes("login")){
+    go("/login.html");
+    return;
   }
 
-  render();
+  if(user && path.includes("login")){
+    go("/index.html");
+    return;
+  }
+
+  if(user){
+    loadHome(user);
+    loadProfile(user);
+    loadEdit(user);
+  }
 });
 
-/* =====================
-   RENDER ROUTES
-===================== */
-async function render(){
+/* =========================
+   HOME PAGE
+========================= */
 
-  const path = window.location.pathname.replace("/Dicio","");
-  const app = document.getElementById("app");
+async function loadHome(user){
 
-  if(!app && path !== "/" && path !== "/profil") return;
-
-  const user = auth.currentUser;
-  if(!user) return;
+  if(!document.getElementById("userBox")) return;
 
   const id = slugify(user.displayName);
+  const doc = await db.collection("users").doc(id).get();
+  const data = doc.data();
 
-  /* ===== PROFIL ===== */
-  if(path === "/profil"){
+  document.getElementById("pp").src = data.photo;
+  document.getElementById("name").innerText = data.name;
 
-    const doc = await db.collection("users").doc(id).get();
-    const data = doc.data();
+  document.getElementById("pp").onclick = () => {
+    const menu = document.getElementById("menu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  };
 
-    app.innerHTML = `
-      <h2>Profil</h2>
-      <img src="${data.photo}" width="100"><br>
-      <b>${data.name}</b><br>
-      @${data.id}<br><br>
-
-      <button onclick="go('/settings')">Modifier profil</button>
-      <button onclick="go('/')">Accueil</button>
-    `;
-  }
-
-  /* ===== SETTINGS ===== */
-  if(path === "/settings"){
-
-    const doc = await db.collection("users").doc(id).get();
-    const data = doc.data();
-
-    app.innerHTML = `
-      <h2>Settings</h2>
-
-      Pseudo:<br>
-      <input id="name" value="${data.name}"><br><br>
-
-      ID:<br>
-      <input id="newId" value="${data.id}"><br><br>
-
-      Photo:<br>
-      <input type="file" id="photoFile"><br><br>
-
-      <button onclick="save()">Sauvegarder</button>
-      <button onclick="go('/profil')">Retour</button>
-    `;
-  }
-
-  /* ===== OTHER PROFILE ===== */
-  const uid = path.replace("/","");
-  if(uid && uid !== "profil" && uid !== "settings"){
-
-    const doc = await db.collection("users").doc(uid).get();
-
-    if(doc.exists){
-      const data = doc.data();
-
-      app.innerHTML = `
-        <h2>${data.name}</h2>
-        <img src="${data.photo}" width="100"><br>
-        @${data.id}<br><br>
-
-        <button onclick="go('/profil')">Retour</button>
-      `;
-    }
-  }
+  document.getElementById("userBox").style.display = "block";
 }
 
-/* =====================
-   SAVE SETTINGS
-===================== */
+/* =========================
+   PROFIL PAGE
+========================= */
+
+async function loadProfile(user){
+
+  if(!document.getElementById("app")) return;
+
+  const id = slugify(user.displayName);
+  const doc = await db.collection("users").doc(id).get();
+  const data = doc.data();
+
+  document.getElementById("app").innerHTML = `
+    <img src="${data.photo}" width="100" style="border-radius:50%"><br><br>
+
+    <h2>${data.name}</h2>
+    <small>@${data.id}</small><br><br>
+
+    <button onclick="go('/modification.html')">Modifier</button>
+    <button onclick="go('/index.html')">Accueil</button>
+  `;
+}
+
+/* =========================
+   MODIFICATION PAGE
+========================= */
+
+async function loadEdit(user){
+
+  if(!document.getElementById("app")) return;
+
+  const id = slugify(user.displayName);
+  const doc = await db.collection("users").doc(id).get();
+  const data = doc.data();
+
+  document.getElementById("app").innerHTML = `
+    <h2>Modifier profil</h2>
+
+    Pseudo:<br>
+    <input id="name" value="${data.name}"><br><br>
+
+    ID:<br>
+    <input id="newId" value="${data.id}"><br><br>
+
+    Photo:<br>
+    <input type="file" id="photo"><br><br>
+
+    <button onclick="save()">Sauvegarder</button>
+  `;
+}
+
+/* =========================
+   SAVE PROFILE
+========================= */
+
 window.save = async () => {
 
   const user = auth.currentUser;
@@ -146,7 +159,7 @@ window.save = async () => {
 
   const name = document.getElementById("name").value;
   const newId = slugify(document.getElementById("newId").value);
-  const file = document.getElementById("photoFile").files[0];
+  const file = document.getElementById("photo").files[0];
 
   const doc = await db.collection("users").doc(oldId).get();
   const data = doc.data();
@@ -161,7 +174,7 @@ window.save = async () => {
     });
   }
 
-  if(newId && newId !== oldId){
+  if(newId !== oldId){
 
     const check = await db.collection("users").doc(newId).get();
 
@@ -177,15 +190,12 @@ window.save = async () => {
     });
 
     await db.collection("users").doc(oldId).delete();
-
-    go("/profil");
-    return;
+  } else {
+    await db.collection("users").doc(oldId).update({
+      name,
+      photo
+    });
   }
 
-  await db.collection("users").doc(oldId).update({
-    name,
-    photo
-  });
-
-  go("/profil");
+  go("/profil.html");
 };
