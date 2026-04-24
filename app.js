@@ -1,10 +1,6 @@
-/* ======================
-   UTIL ROUTER
-====================== */
-function path(){
-  return window.location.pathname.replace("/Dicio","") || "/";
-}
-
+/* =====================
+   UTILS
+===================== */
 function slugify(str){
   return (str || "")
     .toLowerCase()
@@ -12,44 +8,39 @@ function slugify(str){
     .replace(/[^a-z0-9]/g,"");
 }
 
-function go(p){
-  history.pushState({}, "", "/Dicio" + p);
-  route();
-}
-
-window.onpopstate = () => route();
-
-/* ======================
-   LOGIN GOOGLE
-====================== */
+/* =====================
+   LOGIN
+===================== */
 window.login = async () => {
 
   const result = await auth.signInWithPopup(provider);
   const user = result.user;
 
-  const baseId = slugify(user.displayName);
-  let finalId = baseId;
-  let i = 1;
+  const id = slugify(user.displayName);
 
-  while(true){
-    const doc = await db.collection("users").doc(finalId).get();
-    if(!doc.exists) break;
-    finalId = baseId + i;
-    i++;
+  const doc = await db.collection("users").doc(id).get();
+
+  if(!doc.exists){
+    await db.collection("users").doc(id).set({
+      name: user.displayName,
+      photo: user.photoURL,
+      id: id
+    });
   }
 
-  await db.collection("users").doc(finalId).set({
-    name: user.displayName,
-    photo: user.photoURL,
-    id: finalId
-  });
-
-  route();
+  go("/profil");
 };
 
-/* ======================
+/* =====================
+   NAVIGATION
+===================== */
+window.go = (p) => {
+  window.location.href = "/Dicio" + p;
+};
+
+/* =====================
    AUTH
-====================== */
+===================== */
 auth.onAuthStateChanged(user => {
 
   const login = document.getElementById("login");
@@ -64,148 +55,127 @@ auth.onAuthStateChanged(user => {
   if(login) login.style.display = "none";
   if(home) home.style.display = "block";
 
-  route();
+  renderPage();
 });
 
-/* ======================
-   ROUTER
-====================== */
-async function route(){
+/* =====================
+   ROUTING SIMPLE
+===================== */
+async function renderPage(){
 
-  const p = path();
+  const path = window.location.pathname.replace("/Dicio","");
+
   const app = document.getElementById("app");
+  if(!app) return;
 
-  if(!app && p !== "/" && p !== "/profil") return;
-
-  /* ===== HOME ===== */
-  if(p === "/" || p === "/index.html"){
-    return;
-  }
-
-  /* ===== MON PROFIL ===== */
-  if(p === "/profil"){
+  /* ===== PROFIL ===== */
+  if(path === "/profil"){
 
     const user = auth.currentUser;
-    if(!user) return;
+    const id = slugify(user.displayName);
 
-    const snap = await db.collection("users")
-      .where("name","==",user.displayName)
-      .limit(1)
-      .get();
-
-    const data = snap.docs[0].data();
+    const doc = await db.collection("users").doc(id).get();
+    const data = doc.data();
 
     app.innerHTML = `
       <h1>Mon profil</h1>
       <img src="${data.photo}" width="100">
       <p>@${data.id}</p>
 
-      <button onclick="go('/profil/settings')">Modifier</button>
+      <button onclick="go('/settings')">Modifier profil</button>
       <button onclick="go('/')">Menu</button>
     `;
-    return;
   }
 
   /* ===== SETTINGS ===== */
-  if(p === "/profil/settings"){
+  else if(path === "/settings"){
 
     const user = auth.currentUser;
+    const id = slugify(user.displayName);
 
-    const snap = await db.collection("users")
-      .where("name","==",user.displayName)
-      .limit(1)
-      .get();
-
-    const data = snap.docs[0].data();
+    const doc = await db.collection("users").doc(id).get();
+    const data = doc.data();
 
     app.innerHTML = `
-      <h1>Settings</h1>
+      <h1>Modifier profil</h1>
 
-      <input id="newName" placeholder="Pseudo">
-      <input id="newId" placeholder="ID">
-      <input id="newPhoto" placeholder="URL photo">
+      <input id="name" placeholder="Pseudo" value="${data.name}">
+      <input id="newId" placeholder="ID" value="${data.id}">
+      <input id="photo" placeholder="Photo URL" value="${data.photo}">
 
       <button onclick="save()">Sauvegarder</button>
       <button onclick="go('/profil')">Retour</button>
     `;
-    return;
   }
 
-  /* ===== PROFIL USER /ow81 ===== */
-  const id = p.replace("/","");
+  /* ===== USER PROFILE /ow81 ===== */
+  else {
 
-  const doc = await db.collection("users").doc(id).get();
+    const id = path.replace("/","");
+    const doc = await db.collection("users").doc(id).get();
 
-  if(doc.exists){
+    if(doc.exists){
 
-    const data = doc.data();
+      const data = doc.data();
 
-    app.innerHTML = `
-      <h1>${data.name}</h1>
-      <img src="${data.photo}" width="100">
-      <p>@${data.id}</p>
+      app.innerHTML = `
+        <h1>${data.name}</h1>
+        <img src="${data.photo}" width="100">
+        <p>@${data.id}</p>
 
-      <button onclick="go('/')">Menu</button>
-    `;
+        <button onclick="go('/profil')">Retour</button>
+      `;
+    }
   }
 }
 
-/* ======================
-   SAVE PROFILE
-====================== */
+/* =====================
+   SAVE SETTINGS
+===================== */
 window.save = async () => {
 
   const user = auth.currentUser;
+  const oldId = slugify(user.displayName);
 
-  const snap = await db.collection("users")
-    .where("name","==",user.displayName)
-    .limit(1)
-    .get();
+  const name = document.getElementById("name").value;
+  const newId = slugify(document.getElementById("newId").value);
+  const photo = document.getElementById("photo").value;
 
-  const doc = snap.docs[0];
-  const data = doc.data();
+  const oldDoc = await db.collection("users").doc(oldId).get();
+  const data = oldDoc.data();
 
-  const newName = document.getElementById("newName").value;
-  const newId = document.getElementById("newId").value;
-  const newPhoto = document.getElementById("newPhoto").value;
+  let finalId = oldId;
 
-  let update = {};
+  if(newId && newId !== oldId){
 
-  if(newName) update.name = newName;
-  if(newPhoto) update.photo = newPhoto;
-
-  if(newId && newId !== data.id){
-
-    const clean = slugify(newId);
-
-    const check = await db.collection("users").doc(clean).get();
+    const check = await db.collection("users").doc(newId).get();
 
     if(check.exists){
       alert("ID déjà pris");
       return;
     }
 
-    await db.collection("users").doc(clean).set({
-      ...data,
-      id: clean,
-      name: newName || data.name,
-      photo: newPhoto || data.photo
+    await db.collection("users").doc(newId).set({
+      name,
+      photo,
+      id:newId
     });
 
-    await db.collection("users").doc(data.id).delete();
+    await db.collection("users").doc(oldId).delete();
 
-    go("/" + clean);
-    return;
+    finalId = newId;
+  } else {
+
+    await db.collection("users").doc(oldId).update({
+      name,
+      photo
+    });
   }
-
-  await db.collection("users").doc(data.id).update(update);
 
   go("/profil");
 };
 
-/* ======================
-   NAV
-====================== */
-window.go = go;
-
+/* =====================
+   LOGOUT
+===================== */
 window.logout = () => auth.signOut();
