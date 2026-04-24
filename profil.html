@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Profil</title>
+</head>
+<body>
+
+<h1>Profil</h1>
+
+<img id="photo" width="100">
+<p id="name"></p>
+<p id="uid"></p>
+
+<h3>Modifier</h3>
+
+<input id="newName" placeholder="Nouveau pseudo">
+<input id="newId" placeholder="Nouvel ID">
+
+<button onclick="updateProfile()">Enregistrer</button>
+
+<p id="error" style="color:red;"></p>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script src="firebase.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
