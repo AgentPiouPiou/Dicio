@@ -24,12 +24,29 @@ function logout() {
 
 function login() {
   const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope("email");
 
   auth.signInWithPopup(provider).catch(console.error);
 }
 
 /* ======================
-   SAFE IMAGE HANDLER
+   DROPDOWN MENU
+====================== */
+
+function toggleMenu(e) {
+  if (e) e.stopPropagation();
+
+  const menu = document.getElementById("dropdown");
+  if (menu) menu.classList.toggle("active");
+}
+
+document.addEventListener("click", () => {
+  const menu = document.getElementById("dropdown");
+  if (menu) menu.classList.remove("active");
+});
+
+/* ======================
+   SAFE AVATAR
 ====================== */
 
 function setAvatar(img, url) {
@@ -43,7 +60,29 @@ function setAvatar(img, url) {
 }
 
 /* ======================
-   RENDER UI (SAFE + FAST)
+   EMAIL → SAFE FIRESTORE ID
+====================== */
+
+function emailToId(email) {
+  return email
+    .toLowerCase()
+    .replace(/\./g, "_")
+    .replace(/@/g, "_at_");
+}
+
+/* ======================
+   CLEAN USER ID
+====================== */
+
+function generateId(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]/g, "");
+}
+
+/* ======================
+   UI INSTANT (IMPORTANT FIX PERF)
 ====================== */
 
 function renderInstant(user) {
@@ -68,22 +107,13 @@ function renderInstant(user) {
 }
 
 /* ======================
-   USER ID CLEAN
-====================== */
-
-function generateId(name) {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9]/g, "");
-}
-
-/* ======================
-   FIRESTORE (background)
+   FIRESTORE USER SAVE (EMAIL BASED)
 ====================== */
 
 async function saveUserIfNeeded(user) {
-  const ref = db.collection("users").doc(user.uid);
+
+  const emailId = emailToId(user.email);
+  const ref = db.collection("users").doc(emailId);
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
@@ -103,6 +133,7 @@ async function saveUserIfNeeded(user) {
   });
 
   const data = {
+    email: user.email,
     username: user.displayName,
     userId: finalId,
     photoURL: user.photoURL,
@@ -114,7 +145,7 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   AUTH LISTENER (FIX COMPLET)
+   AUTH STATE (FIX FINAL STABLE)
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -126,9 +157,9 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  // ⚡ UI IMMÉDIATE (PLUS D’ATTENTE)
+  // ⚡ UI IMMÉDIATE (plus de lag)
   renderInstant(user);
 
-  // ⚡ FIRESTORE EN ARRIÈRE-PLAN
+  // ⚡ FIRESTORE BACKGROUND
   currentUserData = await saveUserIfNeeded(user);
 });

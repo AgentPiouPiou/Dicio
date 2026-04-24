@@ -1,11 +1,16 @@
+@font-face {
+    font-family: "Inter";
+    src: url("font/static/Inter_18pt-Light.ttf") format("truetype");
+}
+
 /* =========================
    BODY
 ========================= */
 
 body{
     margin:0;
-    font-family:"Inter";
-    background:#fdfcfb;
+    font-family:"Inter", Arial, Helvetica, sans-serif;
+    background:#fdfcfb
 }
 
 /* =========================
@@ -88,6 +93,7 @@ header{
     overflow:hidden;
     display:none;
     min-width:160px;
+    z-index:999;
 }
 
 .dropdown.active{
