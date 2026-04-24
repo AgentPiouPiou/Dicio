@@ -1,39 +1,43 @@
-import { auth, db } from "./firebase.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+// 🔐 LOGIN GOOGLE
+function login() {
+  const provider = new firebase.auth.GoogleAuthProvider();
 
-// 🔤 Génération pseudo unique
+  firebase.auth().signInWithPopup(provider)
+    .then(() => {
+      window.location.href = "/Dicio/";
+    })
+    .catch((error) => {
+      console.error(error);
+      alert(error.message);
+    });
+}
+
+// 🔤 Générer pseudo unique
 async function generateUsername(name) {
   let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
   let username = base;
   let i = 1;
 
   while (true) {
-    const q = query(collection(db, "users"), where("username", "==", username));
-    const res = await getDocs(q);
+    const snapshot = await db.collection("users")
+      .where("username", "==", username)
+      .get();
 
-    if (res.empty) return username;
+    if (snapshot.empty) return username;
 
     username = base + i;
     i++;
   }
 }
 
-// 🎯 Affichage UI
+// 🎯 Affichage accueil
 function render(user) {
   document.getElementById("app").innerHTML = `
     <header class="header">
       <div class="logo">Dicio</div>
+
       <div class="user">
-        <img src="${user.photo}" />
+        <img src="${user.photo}">
         <span>${user.username}</span>
       </div>
     </header>
@@ -44,19 +48,25 @@ function render(user) {
   `;
 }
 
-// 🔐 Auth + DB
-onAuthStateChanged(auth, async (user) => {
+// 🔐 Vérification connexion
+firebase.auth().onAuthStateChanged(async (user) => {
+
+  // ❌ PAS CONNECTÉ
   if (!user) {
-    window.location.href = "/Dicio/login.html";
+    if (!window.location.pathname.includes("login")) {
+      window.location.href = "/Dicio/login.html";
+    }
     return;
   }
 
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
+  // 🔎 Vérifie base
+  const ref = db.collection("users").doc(user.uid);
+  const doc = await ref.get();
 
   let userData;
 
-  if (!snap.exists()) {
+  // 🆕 CRÉATION COMPTE
+  if (!doc.exists) {
     const username = await generateUsername(user.displayName);
 
     userData = {
@@ -66,9 +76,15 @@ onAuthStateChanged(auth, async (user) => {
       photo: user.photoURL
     };
 
-    await setDoc(ref, userData);
+    await ref.set(userData);
   } else {
-    userData = snap.data();
+    userData = doc.data();
+  }
+
+  // 🏠 Affichage seulement sur index
+  if (window.location.pathname.includes("login")) {
+    window.location.href = "/Dicio/";
+    return;
   }
 
   render(userData);

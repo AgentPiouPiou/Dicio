@@ -1,11 +1,11 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #0f172a;
   color: white;
 }
 
-/* centré login */
+/* LOGIN */
 .center {
   display: flex;
   justify-content: center;
@@ -13,7 +13,6 @@ body {
   height: 100vh;
 }
 
-/* carte */
 .card {
   background: #1e293b;
   padding: 40px;
@@ -28,20 +27,18 @@ button {
   background: #3b82f6;
   color: white;
   cursor: pointer;
-  font-size: 16px;
 }
 
 button:hover {
   background: #2563eb;
 }
 
-/* header */
+/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
   padding: 15px 30px;
   background: #020617;
-  align-items: center;
 }
 
 .logo {
@@ -61,7 +58,7 @@ button:hover {
   border-radius: 50%;
 }
 
-/* main */
+/* MAIN */
 .main {
   padding: 40px;
 }
