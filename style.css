@@ -11,17 +11,13 @@ body{
   text-align:center;
 }
 
-h1{
-  font-size:22px;
-}
-
 button{
   width:100%;
   padding:14px;
   margin:6px 0;
   border:none;
   border-radius:10px;
-  background:#ff0000;
+  background:#4a6cf7;
   color:white;
   font-size:16px;
 }
@@ -38,7 +34,6 @@ img{
   margin-top:10px;
 }
 
-@media (max-width:400px){
-  h1{font-size:20px;}
-  button{font-size:15px;}
+video{
+  border-radius:10px;
 }
