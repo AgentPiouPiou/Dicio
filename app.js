@@ -9,33 +9,31 @@ function slugify(str){
 }
 
 /* =====================
-   NAVIGATION SPA
+   ROUTING
 ===================== */
 function go(p){
   history.pushState({}, "", "/Dicio" + p);
-  renderPage();
+  render();
 }
 
-window.onpopstate = () => renderPage();
+window.onpopstate = () => render();
 
 /* =====================
-   INIT AUTO LOAD
+   INIT
 ===================== */
 window.addEventListener("DOMContentLoaded", () => {
   auth.onAuthStateChanged(user => {
-    if(user) renderPage();
+    render();
   });
-
-  renderPage();
+  render();
 });
 
 /* =====================
-   LOGIN GOOGLE
+   LOGIN
 ===================== */
 window.login = async () => {
-
-  const result = await auth.signInWithPopup(provider);
-  const user = result.user;
+  const res = await auth.signInWithPopup(provider);
+  const user = res.user;
 
   const id = slugify(user.displayName);
 
@@ -45,7 +43,7 @@ window.login = async () => {
     await db.collection("users").doc(id).set({
       name: user.displayName,
       photo: user.photoURL,
-      id: id
+      id
     });
   }
 
@@ -58,77 +56,97 @@ window.login = async () => {
 window.logout = () => auth.signOut();
 
 /* =====================
-   ROUTER
+   RENDER
 ===================== */
-async function renderPage(){
+async function render(){
 
   const path = window.location.pathname.replace("/Dicio","");
   const app = document.getElementById("app");
 
-  if(!app && path !== "/" && path !== "/profil") return;
+  const user = auth.currentUser;
+
+  /* ===== HOME ===== */
+  if(path === "/" || path === "/index.html"){
+    const login = document.getElementById("login");
+    const home = document.getElementById("home");
+
+    if(user){
+      login.style.display = "none";
+      home.style.display = "block";
+    } else {
+      login.style.display = "block";
+      home.style.display = "none";
+    }
+    return;
+  }
+
+  if(!app) return;
+
+  const id = user ? slugify(user.displayName) : null;
 
   /* ===== PROFIL ===== */
   if(path === "/profil"){
-
-    const user = auth.currentUser;
-    if(!user) return;
-
-    const id = slugify(user.displayName);
 
     const doc = await db.collection("users").doc(id).get();
     const data = doc.data();
 
     app.innerHTML = `
-      <h1>Mon profil</h1>
-      <img src="${data.photo}" width="120" style="border-radius:50%">
-      <p>@${data.id}</p>
+      <div class="card profile-box">
+        <img src="${data.photo}">
+        <div>
+          <h2>${data.name}</h2>
+          <p>@${data.id}</p>
+        </div>
+      </div>
 
-      <button onclick="go('/settings')">Modifier profil</button>
-      <button onclick="go('/')">Menu</button>
+      <button class="btn-primary" onclick="go('/settings')">Modifier</button>
+      <button class="btn-secondary" onclick="go('/')">Menu</button>
     `;
-
-    return;
   }
 
   /* ===== SETTINGS ===== */
   if(path === "/settings"){
 
-    const user = auth.currentUser;
-    const id = slugify(user.displayName);
-
     const doc = await db.collection("users").doc(id).get();
     const data = doc.data();
 
     app.innerHTML = `
-      <h1>Modifier profil</h1>
+      <div class="card">
 
-      <input id="name" value="${data.name}">
-      <input id="newId" value="${data.id}">
+        <h2>Modifier profil</h2>
 
-      <input type="file" id="photoFile" accept="image/*">
+        <input id="name" value="${data.name}">
+        <input id="newId" value="${data.id}">
+        <input type="file" id="photoFile">
 
-      <button onclick="save()">Enregistrer</button>
-      <button onclick="go('/profil')">Retour</button>
+        <button class="btn-primary" onclick="save()">Sauvegarder</button>
+        <button class="btn-secondary" onclick="go('/profil')">Retour</button>
+
+      </div>
     `;
-
-    return;
   }
 
-  /* ===== PROFIL AUTRE USER ===== */
-  const id = path.replace("/","");
-  const doc = await db.collection("users").doc(id).get();
+  /* ===== OTHER PROFILE ===== */
+  if(path !== "/profil" && path !== "/settings"){
 
-  if(doc.exists){
+    const uid = path.replace("/","");
+    const doc = await db.collection("users").doc(uid).get();
 
-    const data = doc.data();
+    if(doc.exists){
+      const data = doc.data();
 
-    app.innerHTML = `
-      <h1>${data.name}</h1>
-      <img src="${data.photo}" width="120" style="border-radius:50%">
-      <p>@${data.id}</p>
+      app.innerHTML = `
+        <div class="card profile-box">
+          <img src="${data.photo}">
+          <div>
+            <h2>${data.name}</h2>
+            <p>@${data.id}</p>
+          </div>
+        </div>
 
-      <button onclick="go('/profil')">Retour</button>
-    `;
+        <button class="btn-secondary" onclick="go('/profil')">Retour</button>
+      `;
+    }
   }
 }
 
@@ -142,24 +160,21 @@ window.save = async () => {
 
   const name = document.getElementById("name").value;
   const newId = slugify(document.getElementById("newId").value);
-
   const file = document.getElementById("photoFile").files[0];
 
-  const oldDoc = await db.collection("users").doc(oldId).get();
-  const data = oldDoc.data();
+  const doc = await db.collection("users").doc(oldId).get();
+  const data = doc.data();
 
   let photo = data.photo;
 
-  /* IMAGE CONVERT */
   if(file){
-    photo = await new Promise(resolve => {
+    photo = await new Promise(res => {
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => res(reader.result);
       reader.readAsDataURL(file);
     });
   }
 
-  /* ID CHANGE */
   if(newId && newId !== oldId){
 
     const check = await db.collection("users").doc(newId).get();
@@ -172,7 +187,7 @@ window.save = async () => {
     await db.collection("users").doc(newId).set({
       name,
       photo,
-      id: newId
+      id:newId
     });
 
     await db.collection("users").doc(oldId).delete();
@@ -181,16 +196,10 @@ window.save = async () => {
     return;
   }
 
-  /* SIMPLE UPDATE */
   await db.collection("users").doc(oldId).update({
     name,
     photo
   });
 
   go("/profil");
-};
-
-/* =====================
-   NAV FIX
-===================== */
-window.go = go;
+}
