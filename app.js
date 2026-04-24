@@ -29,7 +29,7 @@ function login() {
 }
 
 /* ======================
-   USER ID UNIQUE
+   ID UNIQUE SIMPLE
 ====================== */
 
 function generateId(name) {
@@ -40,71 +40,57 @@ function generateId(name) {
 }
 
 /* ======================
-   CREATE / GET USER
+   FIRESTORE (background only)
 ====================== */
 
-async function createOrGetUser(user) {
+async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.uid);
   const snap = await ref.get();
 
-  if (!snap.exists) {
-    const baseId = generateId(user.displayName);
+  if (snap.exists) return snap.data();
 
-    const all = await db.collection("users").get();
+  const baseId = generateId(user.displayName);
 
-    let finalId = baseId;
-    let i = 1;
+  const all = await db.collection("users").get();
 
-    all.forEach(doc => {
-      if (doc.data().userId === finalId) {
-        finalId = baseId + i;
-        i++;
-      }
-    });
+  let finalId = baseId;
+  let i = 1;
 
-    const data = {
-      username: user.displayName,
-      userId: finalId,
-      photoURL: user.photoURL,
-      displayName: user.displayName
-    };
+  all.forEach(doc => {
+    if (doc.data().userId === finalId) {
+      finalId = baseId + i;
+      i++;
+    }
+  });
 
-    await ref.set(data);
-    return data;
-  }
+  const data = {
+    username: user.displayName,
+    userId: finalId,
+    photoURL: user.photoURL,
+    displayName: user.displayName
+  };
 
-  return snap.data();
+  await ref.set(data);
+  return data;
 }
 
 /* ======================
-   HEADER RENDER
+   UI IMMÉDIATE (IMPORTANT FIX)
 ====================== */
 
-function renderHeader(data) {
+function renderInstant(user) {
+
   const photo = document.getElementById("userPhoto");
   const name = document.getElementById("userName");
   const welcome = document.getElementById("welcome");
 
-  if (photo) photo.src = data.photoURL;
-  if (name) name.textContent = data.username;
-  if (welcome) welcome.textContent = "Bienvenue " + data.username + " sur Dicio";
+  if (photo) photo.src = user.photoURL;
+  if (name) name.textContent = user.displayName;
+  if (welcome) welcome.textContent = "Bienvenue " + user.displayName + " sur Dicio";
 }
 
 /* ======================
-   DROPDOWN MENU
-====================== */
-
-document.addEventListener("click", () => {
-  document.getElementById("dropdown")?.classList.remove("active");
-});
-
-function toggleMenu(e) {
-  e.stopPropagation();
-  document.getElementById("dropdown").classList.toggle("active");
-}
-
-/* ======================
-   AUTH LISTENER OPTIMISÉ
+   AUTH LISTENER (FIX LAG)
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -116,18 +102,9 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  currentUserData = await createOrGetUser(user);
+  // ⚡ 1. AFFICHAGE IMMÉDIAT (Google Auth direct)
+  renderInstant(user);
 
-  renderHeader(currentUserData);
+  // ⚡ 2. FIRESTORE EN ARRIÈRE-PLAN (non bloquant UI)
+  currentUserData = await saveUserIfNeeded(user);
 });
-
-/* ======================
-   ICONS LOAD
-====================== */
-
-function loadIcons() {
-  document.getElementById("icon-user").innerHTML = Icons.user;
-  document.getElementById("icon-logout").innerHTML = Icons.logout;
-}
-
-document.addEventListener("DOMContentLoaded", loadIcons);
