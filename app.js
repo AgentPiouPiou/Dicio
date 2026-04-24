@@ -1,15 +1,24 @@
 const BASE_URL = "https://agentpioupiou.github.io/dicio";
 
-/* =======================
-   UTILS
-======================= */
-function getPseudoId(user){
-  return user.displayName.toLowerCase().replace(/\s+/g, "");
+/* =========================
+   UTIL
+========================= */
+function slugify(str){
+  return str.toLowerCase().replace(/\s+/g, "");
 }
 
-/* =======================
+function getURLId(){
+  const url = new URLSearchParams(window.location.search).get("id");
+  return url ? url.split("/")[0] : null;
+}
+
+function isSettingsPage(){
+  return window.location.href.includes("/settings");
+}
+
+/* =========================
    LOGIN GOOGLE
-======================= */
+========================= */
 window.login = async () => {
   try {
     const result = await auth.signInWithPopup(provider);
@@ -18,10 +27,9 @@ window.login = async () => {
     const ref = db.collection("users").doc(user.uid);
     const doc = await ref.get();
 
-    // création profil si inexistant
     if (!doc.exists) {
 
-      let baseId = getPseudoId(user);
+      let baseId = slugify(user.displayName || "user");
       let finalId = baseId;
       let i = 1;
 
@@ -54,111 +62,140 @@ window.login = async () => {
   }
 };
 
-/* =======================
+/* =========================
    AUTH STATE
-======================= */
+========================= */
 auth.onAuthStateChanged(async user => {
 
-  if (!user) {
-    const login = document.getElementById("login");
-    const home = document.getElementById("home");
+  const login = document.getElementById("login");
+  const home = document.getElementById("home");
 
+  if (!user) {
     if (login) login.style.display = "block";
     if (home) home.style.display = "none";
     return;
   }
 
-  const login = document.getElementById("login");
-  const home = document.getElementById("home");
-
   if (login) login.style.display = "none";
   if (home) home.style.display = "block";
 
-  /* ===== PROFIL ===== */
+  /* =========================
+     PROFIL PAGE
+  ========================= */
   if (window.location.pathname.includes("profil.html")) {
 
-    const ref = db.collection("users").doc(user.uid);
-    const data = (await ref.get()).data();
+    const id = getURLId();
+    if (!id) return;
+
+    const snap = await db.collection("users")
+      .where("id", "==", id)
+      .get();
+
+    if (snap.empty) return;
+
+    const data = snap.docs[0].data();
 
     document.getElementById("photo").src = data.photo;
     document.getElementById("name").innerText = data.name;
     document.getElementById("id").innerText = data.id;
+
+    // settings visible
+    if (isSettingsPage()) {
+      const settings = document.getElementById("settings");
+      if (settings) settings.style.display = "block";
+    }
   }
 });
 
-/* =======================
-   NAVIGATION
-======================= */
-window.goProfile = () => {
+/* =========================
+   NAVIGATION PROFIL
+========================= */
+window.goProfile = async () => {
   const user = auth.currentUser;
   if (!user) return;
-  window.location.href = `profil.html?id=${user.uid}`;
+
+  const doc = await db.collection("users").doc(user.uid).get();
+  const id = doc.data().id;
+
+  window.location.href = `profil.html?id=${id}`;
 };
 
-window.logout = () => {
-  auth.signOut();
+/* =========================
+   SETTINGS PAGE
+========================= */
+window.goSettings = () => {
+  const id = getURLId();
+  if (!id) return;
+
+  window.location.href = `profil.html?id=${id}/settings`;
 };
 
-/* =======================
+/* =========================
    UPDATE PROFILE
-======================= */
+========================= */
 window.updateProfile = async () => {
 
-  const user = auth.currentUser;
-  if (!user) return;
+  const id = getURLId();
+  if (!id) return;
 
-  const ref = db.collection("users").doc(user.uid);
-  const data = (await ref.get()).data();
+  const snap = await db.collection("users")
+    .where("id", "==", id)
+    .get();
 
-  const newName = document.getElementById("newName").value;
-  let newId = document.getElementById("newId").value;
+  if (snap.empty) return;
+
+  const doc = snap.docs[0];
+  const data = doc.data();
+  const uid = doc.id;
+
+  const newName = document.getElementById("newName")?.value;
+  let newId = document.getElementById("newId")?.value;
+  const newPhoto = document.getElementById("newPhoto")?.value;
   const error = document.getElementById("error");
 
   let update = {};
 
-  /* ===== NAME ===== */
+  /* NAME */
   if (newName) {
     update.name = newName;
   }
 
-  /* ===== ID ===== */
+  /* PHOTO */
+  if (newPhoto) {
+    update.photo = newPhoto;
+  }
+
+  /* ID */
   if (newId) {
 
-    newId = newId.toLowerCase().replace(/\s+/g, "");
+    newId = slugify(newId);
 
     const check = await db.collection("ids").doc(newId).get();
 
     if (check.exists) {
-
-      error.innerText = "❌ ID déjà pris";
-
-      // suggestion auto
-      let i = 1;
-      let suggestion = newId + i;
-
-      while (true) {
-        const test = await db.collection("ids").doc(suggestion).get();
-        if (!test.exists) break;
-        i++;
-        suggestion = newId + i;
-      }
-
-      error.innerText += " → suggestion : " + suggestion;
+      if (error) error.innerText = "❌ ID déjà pris";
       return;
     }
 
     // libérer ancien ID
     await db.collection("ids").doc(data.id).delete();
 
-    // réserver nouveau ID
+    // réserver nouveau
     await db.collection("ids").doc(newId).set({
-      uid: user.uid
+      uid
     });
 
     update.id = newId;
   }
 
-  await ref.update(update);
+  await db.collection("users").doc(uid).update(update);
 
   location.reload();
+};
+
+/* =========================
+   LOGOUT
+========================= */
+window.logout = () => {
+  auth.signOut();
 };

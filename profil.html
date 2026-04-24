@@ -3,23 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <title>Profil</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="container">
+
 <h1>Profil</h1>
 
-<img id="photo" width="100">
-<p id="name"></p>
+<img id="photo" width="100" style="border-radius:50%">
+
+<h2 id="name"></h2>
 <p id="id"></p>
 
-<h3>Modifier</h3>
+<button onclick="goSettings()">Modifier</button>
 
-<input id="newName" placeholder="Pseudo">
-<input id="newId" placeholder="ID">
+<div id="settings" style="display:none;">
+  <h2>Settings</h2>
 
-<button onclick="updateProfile()">Enregistrer</button>
+  <input id="newName" placeholder="Pseudo">
+  <input id="newId" placeholder="ID">
 
-<p id="error" style="color:red;"></p>
+  <input id="newPhoto" placeholder="URL photo">
+
+  <button onclick="updateProfile()">Enregistrer</button>
+
+  <p id="error" style="color:red;"></p>
+</div>
+
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
