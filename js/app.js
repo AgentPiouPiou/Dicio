@@ -1,6 +1,9 @@
 let currentUserData = null;
 
-/* NAVIGATION */
+/* ======================
+   NAVIGATION
+====================== */
+
 function goHome() {
   window.location.href = "/Dicio/";
 }
@@ -15,13 +18,19 @@ function logout() {
   });
 }
 
-/* LOGIN */
+/* ======================
+   LOGIN
+====================== */
+
 function login() {
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider);
 }
 
-/* MENU */
+/* ======================
+   MENU
+====================== */
+
 function toggleMenu(e) {
   e.stopPropagation();
   document.getElementById("dropdown")?.classList.toggle("active");
@@ -31,20 +40,62 @@ document.addEventListener("click", () => {
   document.getElementById("dropdown")?.classList.remove("active");
 });
 
-/* AVATAR */
+/* ======================
+   ICONS
+====================== */
+
+function loadIcons() {
+  const userIcon = document.getElementById("icon-user");
+  const logoutIcon = document.getElementById("icon-logout");
+
+  if (userIcon) userIcon.innerHTML = Icons.user;
+  if (logoutIcon) logoutIcon.innerHTML = Icons.logout;
+}
+
+document.addEventListener("DOMContentLoaded", loadIcons);
+
+/* ======================
+   AVATAR
+====================== */
+
 function setAvatar(img, url) {
   if (!img) return;
+
   img.src = url || "/img/default-avatar.png";
+
+  img.onerror = () => {
+    img.src = "/img/default-avatar.png";
+  };
 }
 
-/* UI HEADER */
+/* ======================
+   HEADER
+====================== */
+
 function renderHeader(user) {
   setAvatar(document.getElementById("userPhoto"), user.photoURL);
+
   const name = document.getElementById("userName");
-  if (name) name.textContent = user.displayName;
+  if (name) name.textContent = user.displayName || "Utilisateur";
 }
 
-/* FIRESTORE */
+/* ======================
+   WELCOME TEXT
+====================== */
+
+function renderWelcome(user) {
+  const welcome = document.getElementById("welcome");
+
+  if (welcome) {
+    const name = user.displayName || "Utilisateur";
+    welcome.innerHTML = `Bienvenue <b>${name}</b> sur Dicio !`;
+  }
+}
+
+/* ======================
+   FIRESTORE
+====================== */
+
 async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
@@ -63,7 +114,10 @@ async function saveUserIfNeeded(user) {
   return data;
 }
 
-/* AUTH FLOW */
+/* ======================
+   AUTH FLOW
+====================== */
+
 auth.onAuthStateChanged(async (user) => {
 
   if (!user) {
@@ -79,5 +133,7 @@ auth.onAuthStateChanged(async (user) => {
   }
 
   renderHeader(user);
+  renderWelcome(user);
+
   currentUserData = await saveUserIfNeeded(user);
 });
