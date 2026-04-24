@@ -1,42 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Accueil de Dicio</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Dicio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h2>Dicio</h2>
+  <div id="app"></div>
 
-  <button class="profile-btn" onclick="toggleMenu()">
-    <img id="pp-header">
-    <span id="name-header"></span>
-  </button>
-</header>
-
-<div id="menu">
-  <button onclick="go('profil.html')">Profil</button>
-  <button onclick="go('settings.html')">Modifier</button>
-  <button onclick="logout()">Déconnexion</button>
-</div>
-
-
-<div id="menu" class="menu">
-  <button onclick="go('profil.html')">Profil</button>
-  <button onclick="go('settings.html')">Modifier profil</button>
-  <button onclick="logout()">Déconnexion</button>
-</div>
-
-<h1 style="padding:20px;">Accueil</h1>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-<script src="firebase.js"></script>
-<script src="app.js"></script>
-
+  <script type="module" src="app.js"></script>
 </body>
 </html>

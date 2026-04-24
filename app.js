@@ -1,86 +1,75 @@
-function go(page){
-  window.location.href = "/Dicio/" + page;
+import { auth, db } from "./firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// 🔤 Génération pseudo unique
+async function generateUsername(name) {
+  let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  let username = base;
+  let i = 1;
+
+  while (true) {
+    const q = query(collection(db, "users"), where("username", "==", username));
+    const res = await getDocs(q);
+
+    if (res.empty) return username;
+
+    username = base + i;
+    i++;
+  }
 }
 
-function login(){
-  auth.signInWithPopup(provider);
+// 🎯 Affichage UI
+function render(user) {
+  document.getElementById("app").innerHTML = `
+    <header class="header">
+      <div class="logo">Dicio</div>
+      <div class="user">
+        <img src="${user.photo}" />
+        <span>${user.username}</span>
+      </div>
+    </header>
+
+    <main class="main">
+      <h1>Bienvenue ${user.username} sur Dicio !</h1>
+    </main>
+  `;
 }
 
-function logout(){
-  auth.signOut().then(()=>go("login.html"));
-}
-
-function toggleMenu(){
-  const m = document.getElementById("menu");
-  if(!m) return;
-  m.style.display = (m.style.display === "flex") ? "none" : "flex";
-}
-
-/* CLEAN ID */
-function clean(str){
-  return (str || "").toLowerCase().replace(/[^a-z0-9]/g,"");
-}
-
-/* =========================
-   AUTH SAFE FLOW
-========================= */
-
-auth.onAuthStateChanged(async user => {
-
-  if(!user){
-    if(!location.pathname.includes("login")){
-      go("login.html");
-    }
+// 🔐 Auth + DB
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "/Dicio/login.html";
     return;
   }
 
-  if(location.pathname.includes("login")){
-    go("index.html");
-    return;
-  }
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
 
-  /* HEADER */
-  setText("name-header", user.displayName);
-  setImg("pp-header", user.photoURL);
+  let userData;
 
-  /* PROFILE */
-  if(document.getElementById("pseudo")){
-    loadUser(user);
-  }
+  if (!snap.exists()) {
+    const username = await generateUsername(user.displayName);
 
-});
-
-/* =========================
-   LOAD USER
-========================= */
-
-async function loadUser(user){
-
-  const ref = db.collection("users").doc(user.email);
-  const doc = await ref.get();
-
-  if(!doc.exists){
-    await ref.set({
-      pseudo: user.displayName,
-      id: clean(user.displayName),
+    userData = {
+      uid: user.uid,
+      name: user.displayName,
+      username: username,
       photo: user.photoURL
-    });
+    };
+
+    await setDoc(ref, userData);
+  } else {
+    userData = snap.data();
   }
 
-  const data = (await ref.get()).data();
-
-  setText("pseudo", data.pseudo);
-  setText("id", "@" + data.id);
-  setImg("pp", data.photo);
-}
-
-/* SAFE DOM */
-function setText(id, val){
-  const el = document.getElementById(id);
-  if(el) el.innerText = val;
-}
-
-function setImg(id, val){
-  const el = document.getElementById(id);
-  if(el) el.src = val;
-}
+  render(userData);
+});
