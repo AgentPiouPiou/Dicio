@@ -25,135 +25,160 @@ function logout(){
 }
 
 /* =========================
-   MENU DROPDOWN
+   MENU
 ========================= */
 
 function toggleMenu(){
-  const menu = document.getElementById("menu");
-  if(menu){
-    menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+  const m = document.getElementById("menu");
+  if(m){
+    m.style.display = (m.style.display === "flex") ? "none" : "flex";
   }
 }
 
 /* =========================
-   AUTH SYSTEM GLOBAL
+   CLEAN ID
+========================= */
+
+function clean(str){
+  return (str || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g,"");
+}
+
+/* =========================
+   AUTH FLOW STABLE
 ========================= */
 
 auth.onAuthStateChanged(async user => {
 
+  const path = window.location.pathname;
+
+  /* ❌ PAS CONNECTÉ */
   if(!user){
-    if(!window.location.pathname.includes("login")){
+    if(!path.includes("login")){
       window.location.href = "/Dicio/login.html";
     }
     return;
   }
 
-  if(user && window.location.pathname.includes("login")){
+  /* 🔁 CONNECTÉ → LOGIN BLOQUÉ */
+  if(user && path.includes("login")){
     window.location.href = "/Dicio/index.html";
     return;
   }
 
-  /* HEADER LOAD */
-  if(document.getElementById("account-name")){
-    document.getElementById("account-name").innerText = user.displayName;
-    document.getElementById("account-icon").src = user.photoURL;
+  /* HEADER LOAD (SAFE) */
+  const nameEl = document.getElementById("account-name");
+  const ppEl = document.getElementById("account-icon");
+
+  if(nameEl && ppEl){
+    nameEl.innerText = user.displayName;
+    ppEl.src = user.photoURL;
   }
 
-  /* PROFIL PAGE */
+  /* PROFIL */
   if(document.getElementById("pseudo")){
-    loadProfile(user);
+    await loadOrCreateUser(user);
   }
 
 });
 
 /* =========================
-   CLEAN STRING
+   CREATE / LOAD USER (IMPORTANT FIX)
 ========================= */
 
-function clean(str){
-  return str.toLowerCase().replace(/[^a-z0-9]/g,"");
-}
+async function loadOrCreateUser(user){
 
-/* =========================
-   UNIQUE ID GENERATOR
-========================= */
+  const emailId = clean(user.email); // UNIQUE STABLE KEY
 
-async function generateId(base){
-
-  let id = clean(base);
-  let i = 0;
-
-  while(true){
-    const doc = await db.collection("users").doc(id).get();
-    if(!doc.exists) return id;
-    i++;
-    id = clean(base) + i;
-  }
-}
-
-/* =========================
-   LOAD PROFILE
-========================= */
-
-async function loadProfile(user){
-
-  const id = await generateId(user.displayName);
-
-  const ref = db.collection("users").doc(id);
+  const ref = db.collection("users").doc(emailId);
   const doc = await ref.get();
 
+  let data;
+
   if(!doc.exists){
-    await ref.set({
+
+    // 🔥 FIRST LOGIN → CREATE USER
+    data = {
       pseudo: user.displayName,
       photo: user.photoURL,
-      id
-    });
+      id: emailId,
+      createdAt: Date.now()
+    };
+
+    await ref.set(data);
+
+  } else {
+    data = doc.data();
   }
 
-  const data = (await ref.get()).data();
-
-  document.getElementById("pp").src = data.photo;
-  document.getElementById("pseudo").innerText = data.pseudo;
-  document.getElementById("id").innerText = "@" + data.id;
+  // 🔥 SAFE RENDER (ANTI BUG MOBILE)
+  renderProfile(data);
 }
 
 /* =========================
-   EDIT PROFILE (LIVE)
+   RENDER PROFILE (SAFE DOM)
+========================= */
+
+function renderProfile(data){
+
+  const pp = document.getElementById("pp");
+  const pseudo = document.getElementById("pseudo");
+  const id = document.getElementById("id");
+
+  if(pp) pp.src = data.photo;
+  if(pseudo) pseudo.innerText = data.pseudo;
+  if(id) id.innerText = "@" + data.id;
+}
+
+/* =========================
+   EDIT PROFILE (SAFE + REAL TIME)
 ========================= */
 
 window.editProfile = async () => {
 
   const user = auth.currentUser;
+  if(!user) return;
 
-  const newPseudo = prompt("Nouveau pseudo ?", user.displayName);
+  const emailId = clean(user.email);
+  const ref = db.collection("users").doc(emailId);
+
+  const doc = await ref.get();
+  const data = doc.data();
+
+  const newPseudo = prompt("Nouveau pseudo :", data.pseudo);
   if(!newPseudo) return;
 
-  const file = document.createElement("input");
-  file.type = "file";
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
 
-  file.onchange = async () => {
+  fileInput.onchange = async () => {
 
-    let photo = user.photoURL;
+    let photo = data.photo;
 
-    if(file.files[0]){
-      photo = await new Promise(res=>{
-        const reader = new FileReader();
-        reader.onload = ()=>res(reader.result);
-        reader.readAsDataURL(file.files[0]);
-      });
+    if(fileInput.files[0]){
+      photo = await toBase64(fileInput.files[0]);
     }
 
-    const newId = await generateId(newPseudo);
-
-    await db.collection("users").doc(newId).set({
+    await ref.update({
       pseudo: newPseudo,
-      photo,
-      id:newId
+      photo: photo
     });
 
-    alert("Profil mis à jour");
     location.reload();
   };
 
-  file.click();
+  fileInput.click();
 };
+
+/* =========================
+   FILE → BASE64
+========================= */
+
+function toBase64(file){
+  return new Promise(res=>{
+    const reader = new FileReader();
+    reader.onload = () => res(reader.result);
+    reader.readAsDataURL(file);
+  });
+}

@@ -1,28 +1,69 @@
-body{
+/* =========================
+   RESET
+========================= */
+
+*{
   margin:0;
-  font-family:Arial;
-  background:#f4f6f8;
+  padding:0;
+  box-sizing:border-box;
 }
 
-/* LOGIN */
+body{
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+  color:#111;
+  min-height:100vh;
+}
+
+/* =========================
+   LOGIN PAGE
+========================= */
+
 .login{
   height:100vh;
   display:flex;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
+  gap:20px;
 }
 
-/* HEADER */
+.login h1{
+  font-size:28px;
+}
+
+button{
+  cursor:pointer;
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  background:#2d6cdf;
+  color:white;
+  font-size:14px;
+  transition:0.2s;
+}
+
+button:hover{
+  background:#1f4fb5;
+}
+
+/* =========================
+   HEADER
+========================= */
+
 header{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:12px 16px;
   background:#e9ecef;
-  border-bottom:1px solid #ccc;
+  border-bottom:1px solid #dcdcdc;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
+/* LOGO */
 .logo{
   height:32px;
   cursor:pointer;
@@ -32,60 +73,135 @@ header{
 .nav-button{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
   border:none;
   background:transparent;
   cursor:pointer;
+  padding:6px 10px;
+  border-radius:12px;
 }
 
+.nav-button:hover{
+  background:rgba(0,0,0,0.05);
+}
+
+/* PP */
 .account-icon{
   width:34px;
   height:34px;
   border-radius:50%;
+  object-fit:cover;
 }
 
+/* NAME */
 .account-name{
   font-size:15px;
+  font-weight:500;
 }
 
-/* DROPDOWN */
+/* ARROW */
+.chevron-icon{
+  height:14px;
+}
+
+/* =========================
+   DROPDOWN MENU
+========================= */
+
 .dropdown{
   position:absolute;
   top:60px;
-  right:20px;
-  display:none;
-  flex-direction:column;
+  right:16px;
   background:white;
   border:1px solid #ddd;
-  border-radius:10px;
+  border-radius:12px;
+  display:none;
+  flex-direction:column;
+  min-width:160px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,0.1);
 }
 
 .dropdown button{
-  padding:10px;
-  border:none;
   background:white;
-  cursor:pointer;
+  color:black;
   text-align:left;
+  border:none;
+  padding:12px;
+  width:100%;
 }
 
 .dropdown button:hover{
-  background:#f0f0f0;
+  background:#f1f1f1;
 }
 
-/* PROFILE */
+/* =========================
+   ACCUEIL CONTENT
+========================= */
+
+h2{
+  padding:20px;
+}
+
+/* =========================
+   PROFIL PAGE
+========================= */
+
 .profile{
   display:flex;
   align-items:center;
   gap:20px;
-  padding:30px;
+  padding:30px 20px;
 }
 
+/* BIG PP */
 .pp-big{
-  width:100px;
-  height:100px;
+  width:110px;
+  height:110px;
   border-radius:50%;
+  object-fit:cover;
+  background:#ddd;
 }
 
+/* TEXT */
+.profile h1{
+  font-size:28px;
+  margin-bottom:6px;
+}
+
+.profile p{
+  color:gray;
+  font-size:14px;
+}
+
+/* EDIT BUTTON */
 .edit{
-  padding-left:30px;
+  padding:0 20px;
+  margin-top:10px;
+}
+
+/* =========================
+   RESPONSIVE MOBILE
+========================= */
+
+@media (max-width: 600px){
+
+  header{
+    padding:10px;
+  }
+
+  .account-name{
+    display:none; /* plus clean mobile */
+  }
+
+  .profile{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .pp-big{
+    width:90px;
+    height:90px;
+  }
+
 }
