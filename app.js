@@ -18,10 +18,10 @@ function logout() {
   });
 }
 
-// 🔍 Vérifie connexion
+// 🔍 Vérification utilisateur
 firebase.auth().onAuthStateChanged((user) => {
 
-  // Si pas connecté → login
+  // ❌ pas connecté → login
   if (!user) {
     if (!window.location.pathname.includes("login")) {
       window.location.href = "/Dicio/login.html";
@@ -29,13 +29,13 @@ firebase.auth().onAuthStateChanged((user) => {
     return;
   }
 
-  // Si connecté → accueil
+  // ✅ connecté → accueil
   if (window.location.pathname.includes("login")) {
     window.location.href = "/Dicio/";
     return;
   }
 
-  // Affichage simple
+  // 🎯 Affichage nom + photo
   const div = document.getElementById("user");
 
   if (div) {
