@@ -1,3 +1,4 @@
+
 let currentUserData = null;
 
 /* ======================
@@ -45,7 +46,7 @@ document.addEventListener("click", () => {
 });
 
 /* ======================
-   AVATAR SAFE
+   SAFE AVATAR
 ====================== */
 
 function setAvatar(img, url) {
@@ -59,32 +60,7 @@ function setAvatar(img, url) {
 }
 
 /* ======================
-   UI INSTANT
-====================== */
-
-function renderInstant(user) {
-
-  requestAnimationFrame(() => {
-
-    const photo = document.getElementById("userPhoto");
-    const name = document.getElementById("userName");
-    const welcome = document.getElementById("welcome");
-
-    setAvatar(photo, user.photoURL);
-
-    if (name) {
-      name.textContent = user.displayName || "Utilisateur";
-    }
-
-    if (welcome) {
-      welcome.textContent =
-        "Bienvenue " + (user.displayName || "Utilisateur") + " sur Dicio";
-    }
-  });
-}
-
-/* ======================
-   ID CLEAN (pour userId interne)
+   CLEAN USER ID
 ====================== */
 
 function generateId(name) {
@@ -95,14 +71,34 @@ function generateId(name) {
 }
 
 /* ======================
-   FIRESTORE EMAIL DOC
+   UI INSTANT (HEADER)
+====================== */
+
+function renderInstant(user) {
+
+  const photo = document.getElementById("userPhoto");
+  const name = document.getElementById("userName");
+  const welcome = document.getElementById("welcome");
+
+  if (photo) setAvatar(photo, user.photoURL);
+
+  if (name) {
+    name.textContent = user.displayName || "Utilisateur";
+  }
+
+  if (welcome) {
+    welcome.textContent =
+      "Bienvenue " + (user.displayName || "Utilisateur") + " sur Dicio";
+  }
+}
+
+/* ======================
+   FIRESTORE USER (EMAIL DOC)
 ====================== */
 
 async function saveUserIfNeeded(user) {
 
-  // ⚡ EMAIL DIRECT COMME ID
   const ref = db.collection("users").doc(user.email);
-
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
@@ -134,11 +130,26 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   AUTH LISTENER (FAST)
+   ICONS LOAD
+====================== */
+
+function loadNavIcons() {
+  const u = document.getElementById("icon-user");
+  const l = document.getElementById("icon-logout");
+
+  if (u) u.innerHTML = Icons.user;
+  if (l) l.innerHTML = Icons.logout;
+}
+
+document.addEventListener("DOMContentLoaded", loadNavIcons);
+
+/* ======================
+   AUTH STATE (FIX FINAL FLOW)
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
 
+  // ❌ pas connecté → login
   if (!user) {
     if (!location.pathname.includes("login")) {
       location.href = "/Dicio/login.html";
@@ -146,7 +157,15 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
+  // ⚡ LOGIN → HOME AUTO REDIRECT
+  if (location.pathname.includes("login")) {
+    location.href = "/Dicio/";
+    return;
+  }
+
+  // ⚡ UI instant (header immédiat)
   renderInstant(user);
 
+  // ⚡ Firestore en arrière-plan
   currentUserData = await saveUserIfNeeded(user);
 });
