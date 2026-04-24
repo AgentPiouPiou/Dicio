@@ -3,14 +3,19 @@
     src: url("font/static/Inter_18pt-Light.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "Inter Bold";
+    src: url("font/static/Inter_18pt-Bold.ttf") format("truetype");
+}
+
 /* =========================
    BODY
 ========================= */
 
 body{
     margin:0;
-    font-family:"Inter", Arial, Helvetica, sans-serif;
-    background:#fdfcfb
+    font-family:"Inter Bold", "Inter", Arial, Helvetica, sans-serif;
+    background:#fdfcfb;
 }
 
 /* =========================
@@ -30,9 +35,12 @@ header{
     backdrop-filter:blur(15px);
     -webkit-backdrop-filter:blur(15px);
     box-shadow:0 1px 6px rgba(0,0,0,0.08);
+    z-index:1000;
 }
 
-/* LOGO */
+/* =========================
+   LOGO
+========================= */
 
 .logo{
     font-size:22px;
@@ -41,7 +49,9 @@ header{
     cursor:pointer;
 }
 
-/* PROFILE BUTTON */
+/* =========================
+   NAV BUTTON
+========================= */
 
 .nav-button{
     background:transparent;
@@ -61,7 +71,9 @@ header{
     background:rgba(0,0,0,0.06);
 }
 
-/* ACCOUNT */
+/* =========================
+   USER
+========================= */
 
 .account-name{
     font-size:15px;
@@ -76,7 +88,7 @@ header{
 }
 
 .chevron-icon{
-    height:13px;
+    width:13px;
 }
 
 /* =========================
@@ -100,80 +112,80 @@ header{
     display:block;
 }
 
-/* ITEMS */
-
+/* ITEM */
 .item{
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:8px;
     padding:12px;
     cursor:pointer;
     font-size:14px;
 }
 
-.item svg{
-    width:18px;
-    height:18px;
-}
-
-/* COLORS */
-
-.black{
+.item.black{
     color:black;
 }
 
-.black:hover{
+.item.black:hover{
     background:#f2f2f2;
 }
 
-.red{
+.item.red{
     color:red;
 }
 
-.red:hover{
+.item.red:hover{
     background:#ffecec;
 }
 
-/* MAIN */
+/* =========================
+   SVG ICONS
+========================= */
+
+.icon-svg{
+    width:18px;
+    height:18px;
+    display:inline-block;
+    stroke:currentColor;
+}
+
+/* =========================
+   MAIN
+========================= */
 
 main{
     margin:60px 120px;
     font-size:24px;
 }
 
-.icon{
-  width:18px;
-  height:18px;
-  display:inline-block;
-  vertical-align:middle;
-  margin-right:8px;
-  stroke:currentColor;
-}
+/* =========================
+   PROFILE PAGE
+========================= */
 
-/* PROFILE */
 .profile-page{
-  margin:60px 120px;
+    margin:60px 120px;
 }
 
 .profile-card{
-  display:flex;
-  align-items:center;
-  gap:30px;
-  margin-top:40px;
+    display:flex;
+    align-items:center;
+    gap:30px;
+    margin-top:40px;
 }
 
 .profile-card img{
-  width:120px;
-  height:120px;
-  border-radius:50%;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
 }
 
 .profile-info h2{
-  margin:0;
-  font-size:22px;
+    margin:0;
+    font-size:22px;
 }
 
 .profile-info p{
-  margin:5px 0 0;
-  color:gray;
+    margin:5px 0 0;
+    color:gray;
 }

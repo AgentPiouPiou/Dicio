@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Dicio</title>
+<title>Dicio beta</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,7 +12,7 @@
   <div class="logo" onclick="goHome()">Dicio</div>
 
   <button class="nav-button" onclick="toggleMenu(event)">
-    
+
     <img class="account-icon" id="userPhoto">
     <span class="account-name" id="userName"></span>
 
@@ -21,15 +21,17 @@
     </svg>
 
     <div class="dropdown" id="dropdown">
+
       <div class="item black" onclick="goProfile()">
-        <span id="icon-user"></span>
+        <span class="icon" id="icon-user"></span>
         Profil
       </div>
 
       <div class="item red" onclick="logout()">
-        <span id="icon-logout"></span>
+        <span class="icon" id="icon-logout"></span>
         Déconnexion
       </div>
+
     </div>
 
   </button>

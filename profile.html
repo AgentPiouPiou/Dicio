@@ -11,9 +11,29 @@
 <header>
   <div class="logo" onclick="goHome()">Dicio</div>
 
-  <button class="nav-button">
+  <button class="nav-button" onclick="toggleMenu(event)">
+
     <img class="account-icon" id="userPhoto">
     <span class="account-name" id="userName"></span>
+
+    <svg class="chevron-icon" viewBox="0 0 24 24">
+      <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor"/>
+    </svg>
+
+    <div class="dropdown" id="dropdown">
+
+      <div class="item black" onclick="goProfile()">
+        <span class="icon" id="icon-user"></span>
+        Profil
+      </div>
+
+      <div class="item red" onclick="logout()">
+        <span class="icon" id="icon-logout"></span>
+        Déconnexion
+      </div>
+
+    </div>
+
   </button>
 </header>
 

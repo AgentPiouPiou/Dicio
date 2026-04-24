@@ -1,3 +1,4 @@
+
 let currentUserData = null;
 
 /* ======================
@@ -41,8 +42,7 @@ function toggleMenu(e) {
 }
 
 document.addEventListener("click", () => {
-  const menu = document.getElementById("dropdown");
-  if (menu) menu.classList.remove("active");
+  document.getElementById("dropdown")?.classList.remove("active");
 });
 
 /* ======================
@@ -60,29 +60,7 @@ function setAvatar(img, url) {
 }
 
 /* ======================
-   EMAIL → SAFE FIRESTORE ID
-====================== */
-
-function emailToId(email) {
-  return email
-    .toLowerCase()
-    .replace(/\./g, "_")
-    .replace(/@/g, "_at_");
-}
-
-/* ======================
-   CLEAN USER ID
-====================== */
-
-function generateId(name) {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9]/g, "");
-}
-
-/* ======================
-   UI INSTANT (IMPORTANT FIX PERF)
+   RENDER UI INSTANT
 ====================== */
 
 function renderInstant(user) {
@@ -107,13 +85,23 @@ function renderInstant(user) {
 }
 
 /* ======================
-   FIRESTORE USER SAVE (EMAIL BASED)
+   USER ID CLEAN
+====================== */
+
+function generateId(name) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]/g, "");
+}
+
+/* ======================
+   FIRESTORE USER SAVE
 ====================== */
 
 async function saveUserIfNeeded(user) {
 
-  const emailId = emailToId(user.email);
-  const ref = db.collection("users").doc(emailId);
+  const ref = db.collection("users").doc(user.uid);
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
@@ -145,7 +133,21 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   AUTH STATE (FIX FINAL STABLE)
+   ICONS INJECTION
+====================== */
+
+function loadNavIcons() {
+  const u = document.getElementById("icon-user");
+  const l = document.getElementById("icon-logout");
+
+  if (u) u.innerHTML = Icons.user;
+  if (l) l.innerHTML = Icons.logout;
+}
+
+document.addEventListener("DOMContentLoaded", loadNavIcons);
+
+/* ======================
+   AUTH LISTENER (FAST)
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -157,9 +159,9 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  // ⚡ UI IMMÉDIATE (plus de lag)
+  // UI instant
   renderInstant(user);
 
-  // ⚡ FIRESTORE BACKGROUND
+  // Firestore background
   currentUserData = await saveUserIfNeeded(user);
 });
