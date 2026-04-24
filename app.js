@@ -1,166 +1,190 @@
-const BASE_URL = "https://agentpioupiou.github.io/Dicio";
+/* ======================
+   UTIL ROUTER
+====================== */
+function path(){
+  return window.location.pathname.replace("/Dicio","") || "/";
+}
 
-/* =========================
-   UTIL
-========================= */
 function slugify(str){
   return (str || "")
     .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/[^a-z0-9]/g, "");
+    .replace(/\s+/g,"")
+    .replace(/[^a-z0-9]/g,"");
 }
 
-function getProfileId(){
-  const id = new URLSearchParams(window.location.search).get("id");
-  return id ? id.split("/")[0] : null;
+function go(p){
+  history.pushState({}, "", "/Dicio" + p);
+  route();
 }
 
-/* =========================
+window.onpopstate = () => route();
+
+/* ======================
    LOGIN GOOGLE
-========================= */
+====================== */
 window.login = async () => {
-  try {
-    const result = await auth.signInWithPopup(provider);
-    const user = result.user;
 
-    const baseId = slugify(user.displayName || "user");
-    let finalId = baseId;
-    let i = 1;
+  const result = await auth.signInWithPopup(provider);
+  const user = result.user;
 
-    // vérifier si ID existe déjà
-    while (true) {
-      const doc = await db.collection("users").doc(finalId).get();
-      if (!doc.exists) break;
-      finalId = baseId + i;
-      i++;
-    }
+  const baseId = slugify(user.displayName);
+  let finalId = baseId;
+  let i = 1;
 
-    await db.collection("users").doc(finalId).set({
-      name: user.displayName,
-      photo: user.photoURL,
-      id: finalId
-    });
-
-    location.reload();
-
-  } catch (e) {
-    alert("Erreur login : " + e.message);
+  while(true){
+    const doc = await db.collection("users").doc(finalId).get();
+    if(!doc.exists) break;
+    finalId = baseId + i;
+    i++;
   }
+
+  await db.collection("users").doc(finalId).set({
+    name: user.displayName,
+    photo: user.photoURL,
+    id: finalId
+  });
+
+  route();
 };
 
-/* =========================
-   AUTH STATE
-========================= */
-auth.onAuthStateChanged(async user => {
+/* ======================
+   AUTH
+====================== */
+auth.onAuthStateChanged(user => {
 
   const login = document.getElementById("login");
   const home = document.getElementById("home");
 
-  if (!user) {
-    if (login) login.style.display = "block";
-    if (home) home.style.display = "none";
+  if(!user){
+    if(login) login.style.display = "block";
+    if(home) home.style.display = "none";
     return;
   }
 
-  if (login) login.style.display = "none";
-  if (home) home.style.display = "block";
+  if(login) login.style.display = "none";
+  if(home) home.style.display = "block";
 
-  /* =========================
-     PROFIL PAGE
-  ========================= */
-  if (window.location.pathname.includes("profil.html")) {
+  route();
+});
 
-    const id = getProfileId();
-    if (!id) return;
+/* ======================
+   ROUTER
+====================== */
+async function route(){
 
-    const doc = await db.collection("users").doc(id).get();
-    if (!doc.exists) return;
+  const p = path();
+  const app = document.getElementById("app");
+
+  if(!app && p !== "/" && p !== "/profil") return;
+
+  /* ===== HOME ===== */
+  if(p === "/" || p === "/index.html"){
+    return;
+  }
+
+  /* ===== MON PROFIL ===== */
+  if(p === "/profil"){
+
+    const user = auth.currentUser;
+    if(!user) return;
+
+    const snap = await db.collection("users")
+      .where("name","==",user.displayName)
+      .limit(1)
+      .get();
+
+    const data = snap.docs[0].data();
+
+    app.innerHTML = `
+      <h1>Mon profil</h1>
+      <img src="${data.photo}" width="100">
+      <p>@${data.id}</p>
+
+      <button onclick="go('/profil/settings')">Modifier</button>
+      <button onclick="go('/')">Menu</button>
+    `;
+    return;
+  }
+
+  /* ===== SETTINGS ===== */
+  if(p === "/profil/settings"){
+
+    const user = auth.currentUser;
+
+    const snap = await db.collection("users")
+      .where("name","==",user.displayName)
+      .limit(1)
+      .get();
+
+    const data = snap.docs[0].data();
+
+    app.innerHTML = `
+      <h1>Settings</h1>
+
+      <input id="newName" placeholder="Pseudo">
+      <input id="newId" placeholder="ID">
+      <input id="newPhoto" placeholder="URL photo">
+
+      <button onclick="save()">Sauvegarder</button>
+      <button onclick="go('/profil')">Retour</button>
+    `;
+    return;
+  }
+
+  /* ===== PROFIL USER /ow81 ===== */
+  const id = p.replace("/","");
+
+  const doc = await db.collection("users").doc(id).get();
+
+  if(doc.exists){
 
     const data = doc.data();
 
-    const photo = document.getElementById("photo");
-    const name = document.getElementById("name");
-    const uid = document.getElementById("id");
+    app.innerHTML = `
+      <h1>${data.name}</h1>
+      <img src="${data.photo}" width="100">
+      <p>@${data.id}</p>
 
-    if (photo) photo.src = data.photo;
-    if (name) name.innerText = data.name;
-    if (uid) uid.innerText = data.id;
-
-    if (window.location.href.includes("/settings")) {
-      const settings = document.getElementById("settings");
-      if (settings) settings.style.display = "block";
-    }
+      <button onclick="go('/')">Menu</button>
+    `;
   }
-});
+}
 
-/* =========================
-   PROFIL NAVIGATION
-========================= */
-window.goProfile = async () => {
+/* ======================
+   SAVE PROFILE
+====================== */
+window.save = async () => {
+
   const user = auth.currentUser;
-  if (!user) return;
 
-  // on récupère son doc par UID via recherche
   const snap = await db.collection("users")
-    .where("name", "==", user.displayName)
+    .where("name","==",user.displayName)
     .limit(1)
     .get();
 
-  if (snap.empty) return;
-
-  const data = snap.docs[0].data();
-
-  window.location.href = `profil.html?id=${data.id}`;
-};
-
-/* =========================
-   SETTINGS PAGE
-========================= */
-window.goSettings = () => {
-  const id = getProfileId();
-  window.location.href = `profil.html?id=${id}/settings`;
-};
-
-/* =========================
-   UPDATE PROFILE (FIX BOUTON)
-========================= */
-window.updateProfile = async () => {
-
-  const id = getProfileId();
-  if (!id) return;
-
-  const ref = db.collection("users").doc(id);
-  const doc = await ref.get();
-
-  if (!doc.exists) return;
-
+  const doc = snap.docs[0];
   const data = doc.data();
 
-  const newName = document.getElementById("newName")?.value;
-  const newId = document.getElementById("newId")?.value;
-  const newPhoto = document.getElementById("newPhoto")?.value;
-  const error = document.getElementById("error");
+  const newName = document.getElementById("newName").value;
+  const newId = document.getElementById("newId").value;
+  const newPhoto = document.getElementById("newPhoto").value;
 
   let update = {};
 
-  if (newName) update.name = newName;
-  if (newPhoto) update.photo = newPhoto;
+  if(newName) update.name = newName;
+  if(newPhoto) update.photo = newPhoto;
 
-  /* =========================
-     CHANGE ID
-  ========================= */
-  if (newId && newId !== id) {
+  if(newId && newId !== data.id){
 
     const clean = slugify(newId);
 
     const check = await db.collection("users").doc(clean).get();
 
-    if (check.exists) {
-      if (error) error.innerText = "❌ ID déjà pris";
+    if(check.exists){
+      alert("ID déjà pris");
       return;
     }
 
-    // créer nouveau doc
     await db.collection("users").doc(clean).set({
       ...data,
       id: clean,
@@ -168,20 +192,20 @@ window.updateProfile = async () => {
       photo: newPhoto || data.photo
     });
 
-    // supprimer ancien
-    await db.collection("users").doc(id).delete();
+    await db.collection("users").doc(data.id).delete();
 
-    window.location.href = `profil.html?id=${clean}`;
+    go("/" + clean);
     return;
   }
 
-  await ref.update(update);
-  location.reload();
+  await db.collection("users").doc(data.id).update(update);
+
+  go("/profil");
 };
 
-/* =========================
-   LOGOUT
-========================= */
-window.logout = () => {
-  auth.signOut();
-};
+/* ======================
+   NAV
+====================== */
+window.go = go;
+
+window.logout = () => auth.signOut();
