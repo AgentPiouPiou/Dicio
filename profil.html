@@ -8,10 +8,20 @@
 <body>
 
 <header>
+  <h2>Dicio</h2>
 
-  <h2 onclick="go('index.html')" style="cursor:pointer;">Dicio</h2>
-
+  <button class="profile-btn" onclick="toggleMenu()">
+    <img id="pp-header">
+    <span id="name-header"></span>
+  </button>
 </header>
+
+<div id="menu">
+  <button onclick="go('profil.html')">Profil</button>
+  <button onclick="go('settings.html')">Modifier</button>
+  <button onclick="logout()">Déconnexion</button>
+</div>
+
 
 <div class="profil">
 

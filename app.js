@@ -7,9 +7,7 @@ function login(){
 }
 
 function logout(){
-  auth.signOut().then(()=>{
-    go("login.html");
-  });
+  auth.signOut().then(()=>go("login.html"));
 }
 
 function toggleMenu(){
@@ -18,12 +16,13 @@ function toggleMenu(){
   m.style.display = (m.style.display === "flex") ? "none" : "flex";
 }
 
+/* CLEAN ID */
 function clean(str){
   return (str || "").toLowerCase().replace(/[^a-z0-9]/g,"");
 }
 
 /* =========================
-   SAFE AUTH (IMPORTANT FIX)
+   AUTH SAFE FLOW
 ========================= */
 
 auth.onAuthStateChanged(async user => {
@@ -40,14 +39,11 @@ auth.onAuthStateChanged(async user => {
     return;
   }
 
-  const nameEl = document.getElementById("name-header");
-  const ppEl = document.getElementById("pp-header");
+  /* HEADER */
+  setText("name-header", user.displayName);
+  setImg("pp-header", user.photoURL);
 
-  if(nameEl && ppEl){
-    nameEl.innerText = user.displayName;
-    ppEl.src = user.photoURL;
-  }
-
+  /* PROFILE */
   if(document.getElementById("pseudo")){
     loadUser(user);
   }
@@ -55,7 +51,7 @@ auth.onAuthStateChanged(async user => {
 });
 
 /* =========================
-   LOAD USER (STABLE)
+   LOAD USER
 ========================= */
 
 async function loadUser(user){
@@ -78,16 +74,13 @@ async function loadUser(user){
   setImg("pp", data.photo);
 }
 
-/* =========================
-   SAFE DOM HELPERS (IMPORTANT FIX MOBILE)
-========================= */
-
-function setText(id, text){
+/* SAFE DOM */
+function setText(id, val){
   const el = document.getElementById(id);
-  if(el) el.innerText = text;
+  if(el) el.innerText = val;
 }
 
-function setImg(id, src){
+function setImg(id, val){
   const el = document.getElementById(id);
-  if(el) el.src = src;
+  if(el) el.src = val;
 }
