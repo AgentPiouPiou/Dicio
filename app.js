@@ -1,4 +1,3 @@
-
 let currentUserData = null;
 
 /* ======================
@@ -46,7 +45,7 @@ document.addEventListener("click", () => {
 });
 
 /* ======================
-   SAFE AVATAR
+   AVATAR SAFE
 ====================== */
 
 function setAvatar(img, url) {
@@ -60,7 +59,7 @@ function setAvatar(img, url) {
 }
 
 /* ======================
-   RENDER UI INSTANT
+   UI INSTANT
 ====================== */
 
 function renderInstant(user) {
@@ -85,7 +84,7 @@ function renderInstant(user) {
 }
 
 /* ======================
-   USER ID CLEAN
+   ID CLEAN (pour userId interne)
 ====================== */
 
 function generateId(name) {
@@ -96,12 +95,14 @@ function generateId(name) {
 }
 
 /* ======================
-   FIRESTORE USER SAVE
+   FIRESTORE EMAIL DOC
 ====================== */
 
 async function saveUserIfNeeded(user) {
 
-  const ref = db.collection("users").doc(user.uid);
+  // ⚡ EMAIL DIRECT COMME ID
+  const ref = db.collection("users").doc(user.email);
+
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
@@ -133,20 +134,6 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   ICONS INJECTION
-====================== */
-
-function loadNavIcons() {
-  const u = document.getElementById("icon-user");
-  const l = document.getElementById("icon-logout");
-
-  if (u) u.innerHTML = Icons.user;
-  if (l) l.innerHTML = Icons.logout;
-}
-
-document.addEventListener("DOMContentLoaded", loadNavIcons);
-
-/* ======================
    AUTH LISTENER (FAST)
 ====================== */
 
@@ -159,9 +146,7 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  // UI instant
   renderInstant(user);
 
-  // Firestore background
   currentUserData = await saveUserIfNeeded(user);
 });
