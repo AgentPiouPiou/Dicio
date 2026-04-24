@@ -1,79 +1,91 @@
 body{
   margin:0;
-  font-family: Arial;
+  font-family:Arial;
   background:#f4f6f8;
 }
 
-/* HEADER */
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 20px;
-  background:#e9ecef;
-  border-bottom:1px solid #ddd;
-}
-
-/* SITE NAME */
-.site-name{
-  font-weight:bold;
-  font-size:18px;
-}
-
-/* PROFILE BUTTON */
-.profile-btn{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  cursor:pointer;
-  padding:6px 10px;
-  border-radius:10px;
-  background:#dfe3e8;
-}
-
-.profile-btn img{
-  width:32px;
-  height:32px;
-  border-radius:50%;
-}
-
-/* DROPDOWN */
-.dropdown{
-  position:absolute;
-  top:55px;
-  left:10px;
-  background:white;
-  border:1px solid #ddd;
-  border-radius:10px;
-  display:none;
-  flex-direction:column;
-  min-width:140px;
-}
-
-.dropdown button{
-  padding:10px;
-  border:none;
-  background:none;
-  cursor:pointer;
-  text-align:left;
-}
-
-.dropdown button:hover{
-  background:#f0f0f0;
-}
-
 /* LOGIN */
-.login-box{
-  display:flex;
+.login{
   height:100vh;
+  display:flex;
   justify-content:center;
   align-items:center;
   flex-direction:column;
 }
 
-button{
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  margin:15px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 16px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(12px);
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+/* LOGO */
+.logo{
+  height:34px;
+}
+
+/* BUTTON PROFILE */
+.nav-button{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:6px 10px;
+  border-radius:12px;
+}
+
+.nav-button:hover{
+  background:rgba(0,0,0,0.06);
+}
+
+/* NAME */
+.account-name{
+  font-size:15px;
+}
+
+/* PP */
+.account-icon{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+}
+
+/* ARROW */
+.chevron-icon{
+  height:14px;
+}
+
+/* DROPDOWN */
+.dropdown{
+  position:absolute;
+  right:40px;
+  top:75px;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  display:none;
+  flex-direction:column;
+}
+
+.dropdown button{
   padding:10px 14px;
   border:none;
-  border-radius:10px;
+  background:white;
+  text-align:left;
   cursor:pointer;
+}
+
+.dropdown button:hover{
+  background:#eee;
 }

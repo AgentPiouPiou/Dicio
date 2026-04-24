@@ -1,15 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Accueil</title>
+<title>Dicio</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>Accueil Dicio</h2>
+<header>
 
-<img id="pp" width="80" style="border-radius:50%">
-<p id="name"></p>
+  <img class="logo" src="img/logo.png" alt="Dicio">
+
+  <button class="nav-button" onclick="toggleMenu()">
+
+    <img id="account-icon" class="account-icon" src="">
+
+    <span id="account-name" class="account-name">...</span>
+
+    <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+
+  </button>
+
+</header>
+
+<!-- MENU -->
+<div id="menu" class="dropdown">
+  <button onclick="go('profil.html')">Profil</button>
+  <button onclick="go('settings.html')">Réglages</button>
+  <button onclick="logout()">Déconnexion</button>
+</div>
+
+<h2 style="padding:20px;">Accueil</h2>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>

@@ -1,18 +1,42 @@
-/* =========================
-   LOGIN GOOGLE
-========================= */
+/* =====================
+   LOGIN
+===================== */
 function login(){
   auth.signInWithPopup(provider);
 }
 
-/* =========================
-   AUTH CHECK GLOBAL
-========================= */
+/* =====================
+   LOGOUT
+===================== */
+function logout(){
+  auth.signOut().then(()=>{
+    window.location.href = "/Dicio/login.html";
+  });
+}
+
+/* =====================
+   NAV
+===================== */
+function go(page){
+  window.location.href = "/Dicio/" + page;
+}
+
+/* =====================
+   MENU TOGGLE
+===================== */
+function toggleMenu(){
+  const m = document.getElementById("menu");
+  m.style.display = (m.style.display === "flex") ? "none" : "flex";
+}
+
+/* =====================
+   AUTH SYSTEM GLOBAL
+===================== */
 auth.onAuthStateChanged(user => {
 
   const path = window.location.pathname;
 
-  // SI PAS CONNECTÉ → LOGIN
+  // PAS CONNECTÉ → LOGIN
   if(!user){
     if(!path.includes("login")){
       window.location.href = "/Dicio/login.html";
@@ -20,17 +44,16 @@ auth.onAuthStateChanged(user => {
     return;
   }
 
-  // SI CONNECTÉ → INDEX
+  // CONNECTÉ → INDEX
   if(user && path.includes("login")){
     window.location.href = "/Dicio/index.html";
     return;
   }
 
-  // AFFICHAGE SUR ACCUEIL
-  if(user && document.getElementById("name")){
-
-    document.getElementById("name").innerText = user.displayName;
-    document.getElementById("pp").src = user.photoURL;
+  // CHARGER HEADER
+  if(user && document.getElementById("account-name")){
+    document.getElementById("account-name").innerText = user.displayName;
+    document.getElementById("account-icon").src = user.photoURL;
   }
 
 });
