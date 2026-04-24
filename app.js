@@ -1,48 +1,49 @@
-// 🔐 LOGIN
+// LOGIN (si besoin plus tard)
 function login() {
   const provider = new firebase.auth.GoogleAuthProvider();
 
-  firebase.auth().signInWithPopup(provider)
-    .then(() => {
-      window.location.href = "/Dicio/";
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
+  auth.signInWithPopup(provider)
+    .then(() => location.reload());
 }
 
-// 🚪 LOGOUT
+// LOGOUT
 function logout() {
-  firebase.auth().signOut().then(() => {
+  auth.signOut().then(() => {
     window.location.href = "/Dicio/login.html";
   });
 }
 
-// 🔍 Vérification utilisateur
-firebase.auth().onAuthStateChanged((user) => {
+// PROFIL (placeholder)
+function goProfile() {
+  alert("Page profil bientôt");
+}
 
-  // ❌ pas connecté → login
+// DROPDOWN
+const btn = document.getElementById("profileBtn");
+
+btn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  document.getElementById("dropdown").classList.toggle("active");
+});
+
+// fermer clic extérieur
+document.addEventListener("click", () => {
+  document.getElementById("dropdown").classList.remove("active");
+});
+
+// AUTH STATE
+auth.onAuthStateChanged((user) => {
+
   if (!user) {
-    if (!window.location.pathname.includes("login")) {
-      window.location.href = "/Dicio/login.html";
-    }
+    window.location.href = "/Dicio/login.html";
     return;
   }
 
-  // ✅ connecté → accueil
-  if (window.location.pathname.includes("login")) {
-    window.location.href = "/Dicio/";
-    return;
-  }
+  // avatar + nom
+  document.getElementById("userPhoto").src = user.photoURL;
+  document.getElementById("userName").textContent = user.displayName;
 
-  // 🎯 Affichage nom + photo
-  const div = document.getElementById("user");
-
-  if (div) {
-    div.innerHTML = `
-      <h2>${user.displayName}</h2>
-      <img src="${user.photoURL}">
-    `;
-  }
-
+  // bienvenue
+  document.getElementById("welcome").textContent =
+    "Bienvenue " + user.displayName + " sur Dicio";
 });

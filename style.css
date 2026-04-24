@@ -1,65 +1,134 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
+/* =========================
+   BODY
+========================= */
+
+body{
+    margin:0;
+    font-family:"Inter";
+    background:#fdfcfb;
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  background: #020617;
+/* =========================
+   HEADER
+========================= */
+
+header{
+    position:sticky;
+    top:20px;
+    margin:20px 120px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 0;
+    border-radius:15px;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+    box-shadow:0 1px 6px rgba(0,0,0,0.08);
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: bold;
+/* LOGO */
+
+.logo{
+    font-size:22px;
+    font-weight:600;
+    margin-left:25px;
+    cursor:pointer;
 }
 
-/* PROFILE */
-.profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  position: relative;
+/* PROFILE BUTTON */
+
+.nav-button{
+    background:transparent;
+    border:none;
+    margin-right:40px;
+    padding:4px 8px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+    position:relative;
+    transition:0.15s;
 }
 
-.profile img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.nav-button:hover{
+    background:rgba(0,0,0,0.06);
 }
 
-/* DROPDOWN */
-.dropdown {
-  display: none;
-  position: absolute;
-  top: 55px;
-  right: 0;
-  background: #1e293b;
-  border-radius: 8px;
-  overflow: hidden;
-  min-width: 150px;
+/* ACCOUNT */
+
+.account-name{
+    font-size:15px;
 }
 
-.dropdown div {
-  padding: 10px;
-  cursor: pointer;
+.account-icon{
+    height:30px;
+    border-radius:100%;
+    border:3px solid #e6e6e6;
 }
 
-.dropdown div:hover {
-  background: #334155;
+.chevron-icon{
+    height:13px;
+}
+
+/* =========================
+   DROPDOWN
+========================= */
+
+.dropdown{
+    position:absolute;
+    top:55px;
+    right:0;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    overflow:hidden;
+    display:none;
+    min-width:160px;
+}
+
+.dropdown.active{
+    display:block;
+}
+
+/* ITEMS */
+
+.item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.item svg{
+    width:18px;
+    height:18px;
+}
+
+/* COLORS */
+
+.black{
+    color:black;
+}
+
+.black:hover{
+    background:#f2f2f2;
+}
+
+.red{
+    color:red;
+}
+
+.red:hover{
+    background:#ffecec;
 }
 
 /* MAIN */
-.main {
-  padding: 40px;
-}
 
-h1 {
-  font-size: 28px;
+main{
+    margin:60px 120px;
+    font-size:24px;
 }
