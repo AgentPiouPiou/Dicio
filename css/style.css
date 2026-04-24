@@ -40,10 +40,13 @@ header{
     border-radius:15px;
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
     box-shadow:0 1px 8px rgba(0,0,0,0.08);
 }
 
-/* LOGO */
+/* =========================
+   LOGO
+========================= */
 
 .logo{
     font-size:20px;
@@ -52,11 +55,13 @@ header{
 }
 
 .logo:hover{
-    transform:scale(1.05);
-    opacity:0.8;
+    transform:scale(1.06);
+    opacity:0.85;
 }
 
-/* NAV BUTTON */
+/* =========================
+   NAV BUTTON
+========================= */
 
 .nav-button{
     background:transparent;
@@ -75,7 +80,22 @@ header{
     transform:scale(1.03);
 }
 
-/* USER */
+/* =========================
+   USER
+========================= */
+
+.account-name{
+    font-size:14px;
+}
+
+/* zoom léger texte */
+.nav-button:hover .account-name{
+    transform:scale(1.05);
+}
+
+/* =========================
+   AVATAR
+========================= */
 
 .account-icon{
     width:36px;
@@ -84,19 +104,28 @@ header{
     object-fit:cover;
 }
 
-.account-icon:hover{
+/* zoom léger avec bouton */
+.nav-button:hover .account-icon{
     transform:scale(1.08);
 }
 
-.account-name{
-    font-size:14px;
+/* zoom plus fort si hover direct */
+.account-icon:hover{
+    transform:scale(1.15);
 }
+
+/* =========================
+   CHEVRON
+========================= */
 
 .chevron-icon{
     width:12px;
+    opacity:0.7;
 }
 
-/* DROPDOWN */
+/* =========================
+   DROPDOWN
+========================= */
 
 .dropdown{
     position:absolute;
@@ -105,6 +134,7 @@ header{
     background:white;
     border-radius:12px;
     box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    overflow:hidden;
     display:none;
     min-width:170px;
 }
@@ -113,7 +143,9 @@ header{
     display:block;
 }
 
-/* ITEMS */
+/* =========================
+   ITEMS
+========================= */
 
 .item{
     display:flex;
@@ -123,6 +155,7 @@ header{
     cursor:pointer;
 }
 
+/* léger slide au hover */
 .item:hover{
     transform:translateX(3px);
 }
@@ -139,27 +172,40 @@ header{
     background:#ffecec;
 }
 
-/* ICONS */
+/* =========================
+   ICONS
+========================= */
 
 .icon-svg{
     width:18px;
     height:18px;
+    display:inline-block;
+    vertical-align:middle;
+    stroke:currentColor;
+    fill:currentColor;
 }
 
-/* MAIN */
+/* =========================
+   MAIN
+========================= */
 
 main{
     margin:60px 120px;
 }
 
-/* WELCOME */
+/* =========================
+   WELCOME TEXT
+========================= */
 
 #welcome{
+    margin-left:20px; /* décale vers la droite */
     font-size:26px;
     animation:fadeInUp 0.5s ease;
 }
 
-/* PROFILE */
+/* =========================
+   PROFILE PAGE
+========================= */
 
 .profile-page{
     margin:60px 120px;
@@ -176,17 +222,24 @@ main{
     width:110px;
     height:110px;
     border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(0,0,0,0.1);
+}
+
+.profile-info h2{
+    margin:0;
+    font-size:22px;
 }
 
 .profile-info p{
+    margin:5px 0 0;
     color:gray;
+    font-size:14px;
 }
 
-h1 {
-    margin-left: 20%;
-}
-
-/* ANIMATION */
+/* =========================
+   ANIMATIONS
+========================= */
 
 @keyframes fadeInUp{
     from{
