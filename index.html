@@ -13,9 +13,22 @@
     <img id="userPhoto" class="account-icon">
     <span id="userName"></span>
 
+    <svg class="chevron-icon" viewBox="0 0 24 24">
+      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor"/>
+    </svg>
+
     <div class="dropdown" id="dropdown">
-      <div class="item" onclick="goProfile()">Profil</div>
-      <div class="item red" onclick="logout()">Déconnexion</div>
+
+      <div class="item black" onclick="goProfile()">
+        <span id="icon-user"></span>
+        <span>Profil</span>
+      </div>
+
+      <div class="item red" onclick="logout()">
+        <span id="icon-logout"></span>
+        <span>Déconnexion</span>
+      </div>
+
     </div>
   </button>
 </header>
