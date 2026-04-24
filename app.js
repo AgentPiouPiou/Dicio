@@ -19,7 +19,7 @@ function logout() {
 }
 
 /* ======================
-   LOGIN
+   LOGIN GOOGLE
 ====================== */
 
 function login() {
@@ -29,7 +29,46 @@ function login() {
 }
 
 /* ======================
-   ID UNIQUE SIMPLE
+   SAFE IMAGE HANDLER
+====================== */
+
+function setAvatar(img, url) {
+  if (!img) return;
+
+  img.src = url || "https://www.gravatar.com/avatar/?d=mp";
+
+  img.onerror = () => {
+    img.src = "https://www.gravatar.com/avatar/?d=mp";
+  };
+}
+
+/* ======================
+   RENDER UI (SAFE + FAST)
+====================== */
+
+function renderInstant(user) {
+
+  requestAnimationFrame(() => {
+
+    const photo = document.getElementById("userPhoto");
+    const name = document.getElementById("userName");
+    const welcome = document.getElementById("welcome");
+
+    setAvatar(photo, user.photoURL);
+
+    if (name) {
+      name.textContent = user.displayName || "Utilisateur";
+    }
+
+    if (welcome) {
+      welcome.textContent =
+        "Bienvenue " + (user.displayName || "Utilisateur") + " sur Dicio";
+    }
+  });
+}
+
+/* ======================
+   USER ID CLEAN
 ====================== */
 
 function generateId(name) {
@@ -40,7 +79,7 @@ function generateId(name) {
 }
 
 /* ======================
-   FIRESTORE (background only)
+   FIRESTORE (background)
 ====================== */
 
 async function saveUserIfNeeded(user) {
@@ -75,22 +114,7 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   UI IMMÉDIATE (IMPORTANT FIX)
-====================== */
-
-function renderInstant(user) {
-
-  const photo = document.getElementById("userPhoto");
-  const name = document.getElementById("userName");
-  const welcome = document.getElementById("welcome");
-
-  if (photo) photo.src = user.photoURL;
-  if (name) name.textContent = user.displayName;
-  if (welcome) welcome.textContent = "Bienvenue " + user.displayName + " sur Dicio";
-}
-
-/* ======================
-   AUTH LISTENER (FIX LAG)
+   AUTH LISTENER (FIX COMPLET)
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -102,9 +126,9 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  // ⚡ 1. AFFICHAGE IMMÉDIAT (Google Auth direct)
+  // ⚡ UI IMMÉDIATE (PLUS D’ATTENTE)
   renderInstant(user);
 
-  // ⚡ 2. FIRESTORE EN ARRIÈRE-PLAN (non bloquant UI)
+  // ⚡ FIRESTORE EN ARRIÈRE-PLAN
   currentUserData = await saveUserIfNeeded(user);
 });
