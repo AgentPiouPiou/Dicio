@@ -1,108 +1,144 @@
-/* ========= LOGIN ========= */
+const BASE_URL = "https://agentpioupiou.github.io/dicio";
+
+/* =======================
+   UTILS
+======================= */
+function getPseudoId(user){
+  return user.displayName.toLowerCase().replace(/\s+/g, "");
+}
+
+/* =======================
+   LOGIN GOOGLE
+======================= */
 window.login = async () => {
-  const result = await auth.signInWithPopup(provider);
-  const user = result.user;
+  try {
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
 
-  const ref = db.collection("users").doc(user.uid);
-  const doc = await ref.get();
+    const ref = db.collection("users").doc(user.uid);
+    const doc = await ref.get();
 
-  if(!doc.exists){
-    // créer ID unique
-    let baseId = user.displayName.toLowerCase().replace(/\s+/g, "");
-    let finalId = baseId;
-    let i = 1;
+    // création profil si inexistant
+    if (!doc.exists) {
 
-    while(true){
-      const check = await db.collection("ids").doc(finalId).get();
-      if(!check.exists) break;
-      finalId = baseId + i;
-      i++;
+      let baseId = getPseudoId(user);
+      let finalId = baseId;
+      let i = 1;
+
+      // ID unique
+      while (true) {
+        const check = await db.collection("ids").doc(finalId).get();
+        if (!check.exists) break;
+        finalId = baseId + i;
+        i++;
+      }
+
+      // réserver ID
+      await db.collection("ids").doc(finalId).set({
+        uid: user.uid
+      });
+
+      // créer user
+      await ref.set({
+        name: user.displayName,
+        photo: user.photoURL,
+        id: finalId
+      });
     }
 
-    // save ID
-    await db.collection("ids").doc(finalId).set({
-      uid: user.uid
-    });
+    location.reload();
 
-    await ref.set({
-      name: user.displayName,
-      photo: user.photoURL,
-      id: finalId
-    });
+  } catch (e) {
+    console.error(e);
+    alert("Erreur login : " + e.message);
   }
-
-  location.reload();
 };
 
-/* ========= AUTH STATE ========= */
+/* =======================
+   AUTH STATE
+======================= */
 auth.onAuthStateChanged(async user => {
 
-  if(!user){
-    document.getElementById("login").style.display = "block";
+  if (!user) {
+    const login = document.getElementById("login");
+    const home = document.getElementById("home");
+
+    if (login) login.style.display = "block";
+    if (home) home.style.display = "none";
     return;
   }
 
-  document.getElementById("login").style.display = "none";
+  const login = document.getElementById("login");
+  const home = document.getElementById("home");
 
-  if(document.getElementById("home")){
-    document.getElementById("home").style.display = "block";
-  }
+  if (login) login.style.display = "none";
+  if (home) home.style.display = "block";
 
-  // profil page
-  if(window.location.pathname.includes("profil.html")){
+  /* ===== PROFIL ===== */
+  if (window.location.pathname.includes("profil.html")) {
 
     const ref = db.collection("users").doc(user.uid);
     const data = (await ref.get()).data();
 
     document.getElementById("photo").src = data.photo;
     document.getElementById("name").innerText = data.name;
-    document.getElementById("uid").innerText = data.id;
+    document.getElementById("id").innerText = data.id;
   }
-
 });
 
-/* ========= NAV ========= */
+/* =======================
+   NAVIGATION
+======================= */
 window.goProfile = () => {
   const user = auth.currentUser;
+  if (!user) return;
   window.location.href = `profil.html?id=${user.uid}`;
 };
 
-/* ========= UPDATE PROFILE ========= */
+window.logout = () => {
+  auth.signOut();
+};
+
+/* =======================
+   UPDATE PROFILE
+======================= */
 window.updateProfile = async () => {
 
   const user = auth.currentUser;
+  if (!user) return;
+
   const ref = db.collection("users").doc(user.uid);
-
-  let newName = document.getElementById("newName").value;
-  let newId = document.getElementById("newId").value;
-  let error = document.getElementById("error");
-
   const data = (await ref.get()).data();
 
-  let updateData = {};
+  const newName = document.getElementById("newName").value;
+  let newId = document.getElementById("newId").value;
+  const error = document.getElementById("error");
 
-  // NAME
-  if(newName){
-    updateData.name = newName;
+  let update = {};
+
+  /* ===== NAME ===== */
+  if (newName) {
+    update.name = newName;
   }
 
-  // ID
-  if(newId){
+  /* ===== ID ===== */
+  if (newId) {
 
     newId = newId.toLowerCase().replace(/\s+/g, "");
 
     const check = await db.collection("ids").doc(newId).get();
 
-    if(check.exists){
-      error.innerText = "ID déjà pris";
+    if (check.exists) {
 
-      // suggestion
+      error.innerText = "❌ ID déjà pris";
+
+      // suggestion auto
       let i = 1;
       let suggestion = newId + i;
 
-      while(true){
+      while (true) {
         const test = await db.collection("ids").doc(suggestion).get();
-        if(!test.exists) break;
+        if (!test.exists) break;
         i++;
         suggestion = newId + i;
       }
@@ -111,18 +147,18 @@ window.updateProfile = async () => {
       return;
     }
 
-    // supprimer ancien
+    // libérer ancien ID
     await db.collection("ids").doc(data.id).delete();
 
-    // ajouter nouveau
+    // réserver nouveau ID
     await db.collection("ids").doc(newId).set({
       uid: user.uid
     });
 
-    updateData.id = newId;
+    update.id = newId;
   }
 
-  await ref.update(updateData);
+  await ref.update(update);
 
   location.reload();
 };
