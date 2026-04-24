@@ -1,76 +1,36 @@
-/* =====================
-   NAVIGATION
-===================== */
-function go(page){
-  window.location.href = "/Dicio/" + page;
+/* =========================
+   LOGIN GOOGLE
+========================= */
+function login(){
+  auth.signInWithPopup(provider);
 }
 
-/* =====================
-   LOGIN GOOGLE
-===================== */
-window.login = async () => {
-  const res = await auth.signInWithPopup(provider);
-  const user = res.user;
-
-  const id = user.displayName.toLowerCase().replace(/\s/g,"");
-
-  const doc = await db.collection("users").doc(id).get();
-
-  if(!doc.exists){
-    await db.collection("users").doc(id).set({
-      name: user.displayName,
-      photo: user.photoURL,
-      id
-    });
-  }
-
-  window.location.href = "/Dicio/index.html";
-};
-
-/* =====================
-   LOGOUT
-===================== */
-window.logout = async () => {
-  await auth.signOut();
-  window.location.href = "/Dicio/login.html";
-};
-
-/* =====================
-   MENU TOGGLE
-===================== */
-window.toggleMenu = () => {
-  const menu = document.getElementById("menu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-};
-
-/* =====================
-   AUTH CHECK (IMPORTANT)
-===================== */
-auth.onAuthStateChanged(async user => {
+/* =========================
+   AUTH CHECK GLOBAL
+========================= */
+auth.onAuthStateChanged(user => {
 
   const path = window.location.pathname;
 
-  /* SI PAS CONNECTÉ -> LOGIN */
-  if(!user && !path.includes("login")){
-    window.location.href = "/Dicio/login.html";
+  // SI PAS CONNECTÉ → LOGIN
+  if(!user){
+    if(!path.includes("login")){
+      window.location.href = "/Dicio/login.html";
+    }
     return;
   }
 
-  /* SI CONNECTÉ ET SUR LOGIN -> INDEX */
+  // SI CONNECTÉ → INDEX
   if(user && path.includes("login")){
     window.location.href = "/Dicio/index.html";
     return;
   }
 
-  /* CHARGER USER SUR INDEX */
-  if(user && document.getElementById("username")){
+  // AFFICHAGE SUR ACCUEIL
+  if(user && document.getElementById("name")){
 
-    const id = user.displayName.toLowerCase().replace(/\s/g,"");
-
-    const doc = await db.collection("users").doc(id).get();
-    const data = doc.data();
-
-    document.getElementById("username").innerText = data.name;
-    document.getElementById("pp").src = data.photo;
+    document.getElementById("name").innerText = user.displayName;
+    document.getElementById("pp").src = user.photoURL;
   }
+
 });
