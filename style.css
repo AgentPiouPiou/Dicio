@@ -1,54 +1,104 @@
-body{
+/* RESET SAFE */
+*{
   margin:0;
-  font-family:Arial;
-  background:#f4f6f8;
+  padding:0;
+  box-sizing:border-box;
 }
 
+body{
+  font-family:Arial;
+  background:#f4f6f8;
+  min-height:100vh;
+  width:100%;
+  overflow-x:hidden;
+}
+
+/* SAFE IMAGES */
+img{
+  max-width:100%;
+  display:block;
+}
+
+/* HEADER RESPONSIVE */
 header{
   display:flex;
   justify-content:space-between;
-  padding:10px;
-  background:#ddd;
-}
-
-.profile-btn{
-  display:flex;
   align-items:center;
-  gap:10px;
-  border:none;
-  background:none;
+  padding:10px 14px;
+  background:#e9ecef;
+  width:100%;
 }
 
+/* PROFILE HEADER */
 #pp-header{
-  width:30px;
-  height:30px;
+  width:34px;
+  height:34px;
   border-radius:50%;
+  object-fit:cover;
 }
 
-.menu{
-  display:none;
+/* DROPDOWN SAFE */
+#menu{
   position:absolute;
   right:10px;
-  top:50px;
+  top:55px;
   background:white;
-  border:1px solid #ccc;
+  border:1px solid #ddd;
+  display:none;
   flex-direction:column;
+  min-width:140px;
+  z-index:1000;
 }
 
-.menu button{
+#menu button{
   padding:10px;
   border:none;
   background:white;
+}
+
+/* PROFILE PAGE */
+.profil{
+  display:flex;
+  gap:15px;
+  padding:20px;
+  flex-wrap:wrap;
 }
 
 .pp{
   width:100px;
   height:100px;
   border-radius:50%;
+  object-fit:cover;
 }
 
-.profil{
-  display:flex;
-  gap:20px;
-  padding:20px;
+/* SETTINGS */
+input{
+  display:block;
+  margin:10px;
+  padding:10px;
+  width:90%;
+  max-width:300px;
+}
+
+button{
+  padding:10px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  background:#2d6cdf;
+  color:white;
+}
+
+/* MOBILE FIX */
+@media (max-width:600px){
+
+  header{
+    flex-direction:row;
+  }
+
+  .profil{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
 }

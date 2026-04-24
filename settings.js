@@ -9,11 +9,15 @@ auth.onAuthStateChanged(async user => {
   const doc = await ref.get();
   const data = doc.data();
 
-  document.getElementById("pseudoInput").value = data.pseudo;
-  document.getElementById("idInput").value = data.id;
-  document.getElementById("pp").src = data.photo;
+  setValue("pseudoInput", data.pseudo);
+  setValue("idInput", data.id);
+  setImg("pp", data.photo);
 
 });
+
+/* =========================
+   CHANGE PHOTO FIXÉ (STABLE ALL DEVICES)
+========================= */
 
 function changePP(){
 
@@ -24,11 +28,18 @@ function changePP(){
   input.onchange = async () => {
 
     const file = input.files[0];
+    if(!file || !ref) return;
+
     const reader = new FileReader();
 
     reader.onload = async () => {
-      await ref.update({ photo: reader.result });
-      document.getElementById("pp").src = reader.result;
+      const base64 = reader.result;
+
+      await ref.update({
+        photo: base64
+      });
+
+      setImg("pp", base64);
     };
 
     reader.readAsDataURL(file);
@@ -37,15 +48,44 @@ function changePP(){
   input.click();
 }
 
+/* =========================
+   SAVE PROFILE
+========================= */
+
 async function save(){
 
+  if(!ref) return;
+
   await ref.update({
-    pseudo: document.getElementById("pseudoInput").value,
-    id: document.getElementById("idInput").value
+    pseudo: getValue("pseudoInput"),
+    id: clean(getValue("idInput"))
   });
 
   alert("Sauvegardé !");
   go("profil.html");
+}
+
+/* =========================
+   SAFE HELPERS
+========================= */
+
+function setValue(id, v){
+  const el = document.getElementById(id);
+  if(el) el.value = v;
+}
+
+function getValue(id){
+  const el = document.getElementById(id);
+  return el ? el.value : "";
+}
+
+function setImg(id, src){
+  const el = document.getElementById(id);
+  if(el) el.src = src;
+}
+
+function clean(str){
+  return (str || "").toLowerCase().replace(/[^a-z0-9]/g,"");
 }
 
 function go(p){

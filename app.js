@@ -8,15 +8,14 @@ function login(){
 
 function logout(){
   auth.signOut().then(()=>{
-    window.location.href = "/Dicio/login.html";
+    go("login.html");
   });
 }
 
 function toggleMenu(){
   const m = document.getElementById("menu");
-  if(m){
-    m.style.display = (m.style.display === "flex") ? "none" : "flex";
-  }
+  if(!m) return;
+  m.style.display = (m.style.display === "flex") ? "none" : "flex";
 }
 
 function clean(str){
@@ -24,35 +23,40 @@ function clean(str){
 }
 
 /* =========================
-   AUTH FLOW
+   SAFE AUTH (IMPORTANT FIX)
 ========================= */
 
 auth.onAuthStateChanged(async user => {
 
   if(!user){
     if(!location.pathname.includes("login")){
-      window.location.href = "/Dicio/login.html";
+      go("login.html");
     }
     return;
   }
 
   if(location.pathname.includes("login")){
-    window.location.href = "/Dicio/index.html";
+    go("index.html");
     return;
   }
 
-  /* HEADER */
-  if(document.getElementById("name-header")){
-    document.getElementById("name-header").innerText = user.displayName;
-    document.getElementById("pp-header").src = user.photoURL;
+  const nameEl = document.getElementById("name-header");
+  const ppEl = document.getElementById("pp-header");
+
+  if(nameEl && ppEl){
+    nameEl.innerText = user.displayName;
+    ppEl.src = user.photoURL;
   }
 
-  /* PROFILE LOAD */
   if(document.getElementById("pseudo")){
     loadUser(user);
   }
 
 });
+
+/* =========================
+   LOAD USER (STABLE)
+========================= */
 
 async function loadUser(user){
 
@@ -69,9 +73,21 @@ async function loadUser(user){
 
   const data = (await ref.get()).data();
 
-  if(document.getElementById("pp")){
-    document.getElementById("pp").src = data.photo;
-    document.getElementById("pseudo").innerText = data.pseudo;
-    document.getElementById("id").innerText = "@" + data.id;
-  }
+  setText("pseudo", data.pseudo);
+  setText("id", "@" + data.id);
+  setImg("pp", data.photo);
+}
+
+/* =========================
+   SAFE DOM HELPERS (IMPORTANT FIX MOBILE)
+========================= */
+
+function setText(id, text){
+  const el = document.getElementById(id);
+  if(el) el.innerText = text;
+}
+
+function setImg(id, src){
+  const el = document.getElementById(id);
+  if(el) el.src = src;
 }
