@@ -9,7 +9,28 @@ function slugify(str){
 }
 
 /* =====================
-   LOGIN
+   NAVIGATION SPA
+===================== */
+function go(p){
+  history.pushState({}, "", "/Dicio" + p);
+  renderPage();
+}
+
+window.onpopstate = () => renderPage();
+
+/* =====================
+   INIT AUTO LOAD
+===================== */
+window.addEventListener("DOMContentLoaded", () => {
+  auth.onAuthStateChanged(user => {
+    if(user) renderPage();
+  });
+
+  renderPage();
+});
+
+/* =====================
+   LOGIN GOOGLE
 ===================== */
 window.login = async () => {
 
@@ -32,46 +53,26 @@ window.login = async () => {
 };
 
 /* =====================
-   NAVIGATION
+   LOGOUT
 ===================== */
-window.go = (p) => {
-  window.location.href = "/Dicio" + p;
-};
+window.logout = () => auth.signOut();
 
 /* =====================
-   AUTH
-===================== */
-auth.onAuthStateChanged(user => {
-
-  const login = document.getElementById("login");
-  const home = document.getElementById("home");
-
-  if(!user){
-    if(login) login.style.display = "block";
-    if(home) home.style.display = "none";
-    return;
-  }
-
-  if(login) login.style.display = "none";
-  if(home) home.style.display = "block";
-
-  renderPage();
-});
-
-/* =====================
-   ROUTING SIMPLE
+   ROUTER
 ===================== */
 async function renderPage(){
 
   const path = window.location.pathname.replace("/Dicio","");
-
   const app = document.getElementById("app");
-  if(!app) return;
+
+  if(!app && path !== "/" && path !== "/profil") return;
 
   /* ===== PROFIL ===== */
   if(path === "/profil"){
 
     const user = auth.currentUser;
+    if(!user) return;
+
     const id = slugify(user.displayName);
 
     const doc = await db.collection("users").doc(id).get();
@@ -79,16 +80,18 @@ async function renderPage(){
 
     app.innerHTML = `
       <h1>Mon profil</h1>
-      <img src="${data.photo}" width="100">
+      <img src="${data.photo}" width="120" style="border-radius:50%">
       <p>@${data.id}</p>
 
       <button onclick="go('/settings')">Modifier profil</button>
       <button onclick="go('/')">Menu</button>
     `;
+
+    return;
   }
 
   /* ===== SETTINGS ===== */
-  else if(path === "/settings"){
+  if(path === "/settings"){
 
     const user = auth.currentUser;
     const id = slugify(user.displayName);
@@ -99,38 +102,38 @@ async function renderPage(){
     app.innerHTML = `
       <h1>Modifier profil</h1>
 
-      <input id="name" placeholder="Pseudo" value="${data.name}">
-      <input id="newId" placeholder="ID" value="${data.id}">
-      <input id="photo" placeholder="Photo URL" value="${data.photo}">
+      <input id="name" value="${data.name}">
+      <input id="newId" value="${data.id}">
 
-      <button onclick="save()">Sauvegarder</button>
+      <input type="file" id="photoFile" accept="image/*">
+
+      <button onclick="save()">Enregistrer</button>
       <button onclick="go('/profil')">Retour</button>
     `;
+
+    return;
   }
 
-  /* ===== USER PROFILE /ow81 ===== */
-  else {
+  /* ===== PROFIL AUTRE USER ===== */
+  const id = path.replace("/","");
+  const doc = await db.collection("users").doc(id).get();
 
-    const id = path.replace("/","");
-    const doc = await db.collection("users").doc(id).get();
+  if(doc.exists){
 
-    if(doc.exists){
+    const data = doc.data();
 
-      const data = doc.data();
+    app.innerHTML = `
+      <h1>${data.name}</h1>
+      <img src="${data.photo}" width="120" style="border-radius:50%">
+      <p>@${data.id}</p>
 
-      app.innerHTML = `
-        <h1>${data.name}</h1>
-        <img src="${data.photo}" width="100">
-        <p>@${data.id}</p>
-
-        <button onclick="go('/profil')">Retour</button>
-      `;
-    }
+      <button onclick="go('/profil')">Retour</button>
+    `;
   }
 }
 
 /* =====================
-   SAVE SETTINGS
+   SAVE PROFILE
 ===================== */
 window.save = async () => {
 
@@ -139,13 +142,24 @@ window.save = async () => {
 
   const name = document.getElementById("name").value;
   const newId = slugify(document.getElementById("newId").value);
-  const photo = document.getElementById("photo").value;
+
+  const file = document.getElementById("photoFile").files[0];
 
   const oldDoc = await db.collection("users").doc(oldId).get();
   const data = oldDoc.data();
 
-  let finalId = oldId;
+  let photo = data.photo;
 
+  /* IMAGE CONVERT */
+  if(file){
+    photo = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /* ID CHANGE */
   if(newId && newId !== oldId){
 
     const check = await db.collection("users").doc(newId).get();
@@ -158,24 +172,25 @@ window.save = async () => {
     await db.collection("users").doc(newId).set({
       name,
       photo,
-      id:newId
+      id: newId
     });
 
     await db.collection("users").doc(oldId).delete();
 
-    finalId = newId;
-  } else {
-
-    await db.collection("users").doc(oldId).update({
-      name,
-      photo
-    });
+    go("/profil");
+    return;
   }
+
+  /* SIMPLE UPDATE */
+  await db.collection("users").doc(oldId).update({
+    name,
+    photo
+  });
 
   go("/profil");
 };
 
 /* =====================
-   LOGOUT
+   NAV FIX
 ===================== */
-window.logout = () => auth.signOut();
+window.go = go;
