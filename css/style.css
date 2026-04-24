@@ -15,7 +15,7 @@
 ========================= */
 
 *{
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, transform 0.15s ease;
 }
 
 body{
@@ -40,7 +40,6 @@ header{
     border-radius:15px;
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
-    -webkit-backdrop-filter:blur(15px);
     box-shadow:0 1px 8px rgba(0,0,0,0.08);
 }
 
@@ -55,7 +54,7 @@ header{
 }
 
 .logo:hover{
-    transform:scale(1.06);
+    transform:scale(1.05);
     opacity:0.85;
 }
 
@@ -104,14 +103,14 @@ header{
     object-fit:cover;
 }
 
-/* zoom léger avec bouton */
+/* zoom léger */
 .nav-button:hover .account-icon{
-    transform:scale(1.08);
+    transform:scale(1.06);
 }
 
-/* zoom plus fort si hover direct */
+/* zoom plus fort direct */
 .account-icon:hover{
-    transform:scale(1.15);
+    transform:scale(1.12);
 }
 
 /* =========================
@@ -155,11 +154,7 @@ header{
     cursor:pointer;
 }
 
-/* léger slide au hover */
-.item:hover{
-    transform:translateX(3px);
-}
-
+/* plus de déplacement */
 .item.black:hover{
     background:#f2f2f2;
 }
@@ -179,14 +174,10 @@ header{
 .icon-svg{
     width:18px;
     height:18px;
-    display:inline-block;
-    vertical-align:middle;
-    stroke:currentColor;
-    fill:currentColor;
 }
 
 /* =========================
-   MAIN
+   MAIN (aligné header)
 ========================= */
 
 main{
@@ -194,17 +185,16 @@ main{
 }
 
 /* =========================
-   WELCOME TEXT
+   WELCOME
 ========================= */
 
 #welcome{
-    margin-left:20px; /* décale vers la droite */
     font-size:26px;
-    animation:fadeInUp 0.5s ease;
+    animation:fadeInUp 0.4s ease;
 }
 
 /* =========================
-   PROFILE PAGE
+   PROFILE
 ========================= */
 
 .profile-page{
@@ -226,25 +216,18 @@ main{
     border:2px solid rgba(0,0,0,0.1);
 }
 
-.profile-info h2{
-    margin:0;
-    font-size:22px;
-}
-
 .profile-info p{
-    margin:5px 0 0;
     color:gray;
-    font-size:14px;
 }
 
 /* =========================
-   ANIMATIONS
+   ANIMATION
 ========================= */
 
 @keyframes fadeInUp{
     from{
         opacity:0;
-        transform:translateY(10px);
+        transform:translateY(8px);
     }
     to{
         opacity:1;

@@ -88,7 +88,7 @@ function renderWelcome(user) {
 
   if (welcome) {
     const name = user.displayName || "Utilisateur";
-    welcome.innerHTML = `Bienvenue <b>${name}</b> sur Dicio !`;
+    welcome.textContent = `Bienvenue ${name} sur Dicio !`;
   }
 }
 
