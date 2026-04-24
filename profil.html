@@ -1,31 +1,21 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Docio - Profil</title>
+<title>Profil</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
 
-  <img class="logo" src="img/logo.png" onclick="go('index.html')">
-
-  <button class="nav-button" onclick="toggleMenu()">
-    <img id="account-icon" class="account-icon">
-    <span id="account-name" class="account-name"></span>
-  </button>
+  <h2 onclick="go('index.html')" style="cursor:pointer;">Dicio</h2>
 
 </header>
 
-<div id="menu" class="dropdown">
-  <button onclick="go('profil.html')">Profil</button>
-  <button onclick="logout()">Déconnexion</button>
-</div>
+<div class="profil">
 
-<div class="profile">
-
-  <img id="pp" class="pp-big">
+  <img id="pp" class="pp">
 
   <div>
     <h1 id="pseudo"></h1>
@@ -34,9 +24,7 @@
 
 </div>
 
-<div class="edit">
-  <button onclick="editProfile()">Modifier</button>
-</div>
+<button onclick="go('settings.html')">Modifier profil</button>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
