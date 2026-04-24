@@ -1,11 +1,14 @@
+
 @font-face {
     font-family: "Inter";
     src: url("font/static/Inter_18pt-Light.ttf") format("truetype");
+    font-weight: 300;
 }
 
 @font-face {
     font-family: "Inter Bold";
     src: url("font/static/Inter_18pt-Bold.ttf") format("truetype");
+    font-weight: 700;
 }
 
 /* =========================
@@ -14,8 +17,9 @@
 
 body{
     margin:0;
-    font-family:"Inter Bold", "Inter", Arial, Helvetica, sans-serif;
+    font-family:"Inter", Arial, Helvetica, sans-serif;
     background:#fdfcfb;
+    color:#111;
 }
 
 /* =========================
@@ -29,12 +33,12 @@ header{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:8px 0;
+    padding:10px 16px;
     border-radius:15px;
-    background:rgba(255,255,255,0.8);
+    background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
     -webkit-backdrop-filter:blur(15px);
-    box-shadow:0 1px 6px rgba(0,0,0,0.08);
+    box-shadow:0 1px 8px rgba(0,0,0,0.08);
     z-index:1000;
 }
 
@@ -43,10 +47,11 @@ header{
 ========================= */
 
 .logo{
-    font-size:22px;
-    font-weight:600;
-    margin-left:25px;
+    font-size:20px;
+    font-weight:700;
+    margin-left:10px;
     cursor:pointer;
+    user-select:none;
 }
 
 /* =========================
@@ -56,15 +61,15 @@ header{
 .nav-button{
     background:transparent;
     border:none;
-    margin-right:40px;
-    padding:4px 8px;
+    margin-right:10px;
+    padding:6px 10px;
     border-radius:14px;
     display:flex;
     align-items:center;
-    gap:6px;
+    gap:8px;
     cursor:pointer;
     position:relative;
-    transition:0.15s;
+    transition:0.15s ease;
 }
 
 .nav-button:hover{
@@ -76,18 +81,22 @@ header{
 ========================= */
 
 .account-name{
-    font-size:15px;
+    font-size:14px;
+    font-weight:500;
 }
 
 .account-icon{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  object-fit:cover;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid rgba(0,0,0,0.08);
 }
 
+/* flèche dropdown */
 .chevron-icon{
-    width:13px;
+    width:12px;
+    opacity:0.7;
 }
 
 /* =========================
@@ -103,7 +112,7 @@ header{
     box-shadow:0 10px 25px rgba(0,0,0,0.12);
     overflow:hidden;
     display:none;
-    min-width:160px;
+    min-width:170px;
     z-index:999;
 }
 
@@ -115,14 +124,15 @@ header{
 .item{
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:10px;
     padding:12px;
     cursor:pointer;
     font-size:14px;
+    transition:0.15s;
 }
 
 .item.black{
-    color:black;
+    color:#111;
 }
 
 .item.black:hover{
@@ -130,7 +140,7 @@ header{
 }
 
 .item.red{
-    color:red;
+    color:#e63946;
 }
 
 .item.red:hover{
@@ -142,10 +152,12 @@ header{
 ========================= */
 
 .icon-svg{
-  width:18px;
-  height:18px;
-  display:inline-block;
-  vertical-align:middle;
+    width:18px;
+    height:18px;
+    display:inline-block;
+    vertical-align:middle;
+    stroke:currentColor;
+    fill:currentColor;
 }
 
 /* =========================
@@ -154,7 +166,7 @@ header{
 
 main{
     margin:60px 120px;
-    font-size:24px;
+    font-size:22px;
 }
 
 /* =========================
@@ -173,10 +185,11 @@ main{
 }
 
 .profile-card img{
-    width:120px;
-    height:120px;
+    width:110px;
+    height:110px;
     border-radius:50%;
     object-fit:cover;
+    border:2px solid rgba(0,0,0,0.1);
 }
 
 .profile-info h2{
@@ -187,4 +200,5 @@ main{
 .profile-info p{
     margin:5px 0 0;
     color:gray;
+    font-size:14px;
 }
