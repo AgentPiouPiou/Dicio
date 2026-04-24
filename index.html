@@ -3,27 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>Dicio</title>
-<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h2>Dicio</h2>
-</header>
+<h1>Dicio</h1>
 
-<div class="container">
+<div id="login">
+  <button onclick="login()">Se connecter avec Google</button>
+</div>
 
-  <div id="login" class="card">
-    <h2>Connexion</h2>
-    <button class="btn-primary" onclick="login()">Se connecter avec Google</button>
-  </div>
-
-  <div id="home" class="card" style="display:none;">
-    <h2>Accueil</h2>
-    <button class="btn-primary" onclick="go('/profil')">Mon profil</button>
-    <button class="btn-secondary" onclick="logout()">Déconnexion</button>
-  </div>
-
+<div id="home" style="display:none;">
+  <h2>Accueil</h2>
+  <button onclick="go('/profil')">Mon profil</button>
+  <button onclick="logout()">Déconnexion</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>

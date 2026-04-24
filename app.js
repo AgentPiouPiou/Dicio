@@ -9,24 +9,11 @@ function slugify(str){
 }
 
 /* =====================
-   ROUTING
+   NAVIGATION SIMPLE
 ===================== */
-function go(p){
-  history.pushState({}, "", "/Dicio" + p);
-  render();
-}
-
-window.onpopstate = () => render();
-
-/* =====================
-   INIT
-===================== */
-window.addEventListener("DOMContentLoaded", () => {
-  auth.onAuthStateChanged(user => {
-    render();
-  });
-  render();
-});
+window.go = (p) => {
+  window.location.href = "/Dicio" + p;
+};
 
 /* =====================
    LOGIN
@@ -56,33 +43,38 @@ window.login = async () => {
 window.logout = () => auth.signOut();
 
 /* =====================
-   RENDER
+   AUTH STATE (IMPORTANT UX FIX)
+===================== */
+auth.onAuthStateChanged(user => {
+
+  const login = document.getElementById("login");
+  const home = document.getElementById("home");
+
+  if(!user){
+    if(login) login.style.display = "block";
+    if(home) home.style.display = "none";
+  } else {
+    if(login) login.style.display = "none";
+    if(home) home.style.display = "block";
+  }
+
+  render();
+});
+
+/* =====================
+   RENDER ROUTES
 ===================== */
 async function render(){
 
   const path = window.location.pathname.replace("/Dicio","");
   const app = document.getElementById("app");
 
+  if(!app && path !== "/" && path !== "/profil") return;
+
   const user = auth.currentUser;
+  if(!user) return;
 
-  /* ===== HOME ===== */
-  if(path === "/" || path === "/index.html"){
-    const login = document.getElementById("login");
-    const home = document.getElementById("home");
-
-    if(user){
-      login.style.display = "none";
-      home.style.display = "block";
-    } else {
-      login.style.display = "block";
-      home.style.display = "none";
-    }
-    return;
-  }
-
-  if(!app) return;
-
-  const id = user ? slugify(user.displayName) : null;
+  const id = slugify(user.displayName);
 
   /* ===== PROFIL ===== */
   if(path === "/profil"){
@@ -91,16 +83,13 @@ async function render(){
     const data = doc.data();
 
     app.innerHTML = `
-      <div class="card profile-box">
-        <img src="${data.photo}">
-        <div>
-          <h2>${data.name}</h2>
-          <p>@${data.id}</p>
-        </div>
-      </div>
+      <h2>Profil</h2>
+      <img src="${data.photo}" width="100"><br>
+      <b>${data.name}</b><br>
+      @${data.id}<br><br>
 
-      <button class="btn-primary" onclick="go('/settings')">Modifier</button>
-      <button class="btn-secondary" onclick="go('/')">Menu</button>
+      <button onclick="go('/settings')">Modifier profil</button>
+      <button onclick="go('/')">Accueil</button>
     `;
   }
 
@@ -111,47 +100,44 @@ async function render(){
     const data = doc.data();
 
     app.innerHTML = `
-      <div class="card">
+      <h2>Settings</h2>
 
-        <h2>Modifier profil</h2>
+      Pseudo:<br>
+      <input id="name" value="${data.name}"><br><br>
 
-        <input id="name" value="${data.name}">
-        <input id="newId" value="${data.id}">
-        <input type="file" id="photoFile">
+      ID:<br>
+      <input id="newId" value="${data.id}"><br><br>
 
-        <button class="btn-primary" onclick="save()">Sauvegarder</button>
-        <button class="btn-secondary" onclick="go('/profil')">Retour</button>
+      Photo:<br>
+      <input type="file" id="photoFile"><br><br>
 
-      </div>
+      <button onclick="save()">Sauvegarder</button>
+      <button onclick="go('/profil')">Retour</button>
     `;
   }
 
   /* ===== OTHER PROFILE ===== */
-  if(path !== "/profil" && path !== "/settings"){
+  const uid = path.replace("/","");
+  if(uid && uid !== "profil" && uid !== "settings"){
 
-    const uid = path.replace("/","");
     const doc = await db.collection("users").doc(uid).get();
 
     if(doc.exists){
       const data = doc.data();
 
       app.innerHTML = `
-        <div class="card profile-box">
-          <img src="${data.photo}">
-          <div>
-            <h2>${data.name}</h2>
-            <p>@${data.id}</p>
-          </div>
-        </div>
+        <h2>${data.name}</h2>
+        <img src="${data.photo}" width="100"><br>
+        @${data.id}<br><br>
 
-        <button class="btn-secondary" onclick="go('/profil')">Retour</button>
+        <button onclick="go('/profil')">Retour</button>
       `;
     }
   }
 }
 
 /* =====================
-   SAVE PROFILE
+   SAVE SETTINGS
 ===================== */
 window.save = async () => {
 
@@ -202,4 +188,4 @@ window.save = async () => {
   });
 
   go("/profil");
-}
+};
