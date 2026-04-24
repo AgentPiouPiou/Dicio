@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Profil</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <div class="logo" onclick="goHome()">Dicio</div>
+
+  <button class="nav-button">
+    <img class="account-icon" id="userPhoto">
+    <span class="account-name" id="userName"></span>
+  </button>
+</header>
+
+<main class="profile-page">
+  <h1 id="profileTitle"></h1>
+
+  <div class="profile-card">
+    <img id="profilePic">
+
+    <div class="profile-info">
+      <h2 id="profileName"></h2>
+      <p id="profileId"></p>
+    </div>
+  </div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script src="firebase.js"></script>
+<script src="icons.js"></script>
+<script src="app.js"></script>
+
+<script>
+auth.onAuthStateChanged(async (user) => {
+  if (!user) return location.href = "/Dicio/login.html";
+
+  const doc = await db.collection("users").doc(user.uid).get();
+  const data = doc.data();
+
+  document.getElementById("profilePic").src = data.photoURL;
+  document.getElementById("profileName").textContent = data.username;
+  document.getElementById("profileId").textContent = data.userId;
+
+  document.getElementById("profileTitle").innerHTML =
+    Icons.user + " Profil";
+});
+</script>
+
+</body>
+</html>

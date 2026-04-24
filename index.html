@@ -1,33 +1,32 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Dicio</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Dicio | Accueil</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-  <div class="logo">Dicio</div>
+  <div class="logo" onclick="goHome()">Dicio</div>
 
-  <button class="nav-button" id="profileBtn">
+  <button class="nav-button" onclick="toggleMenu(event)">
     <img class="account-icon" id="userPhoto">
     <span class="account-name" id="userName"></span>
 
-    <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" fill="none"/>
+    <svg class="chevron-icon" viewBox="0 0 24 24">
+      <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor"/>
     </svg>
 
-    <!-- MENU -->
     <div class="dropdown" id="dropdown">
       <div class="item black" onclick="goProfile()">
-        <svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zM4 20c0-4 16-4 16 0" stroke="black" fill="none"/></svg>
+        <span id="icon-user"></span>
         Profil
       </div>
 
       <div class="item red" onclick="logout()">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="red" fill="none"/><path d="M16 17l5-5-5-5" stroke="red" fill="none"/></svg>
+        <span id="icon-logout"></span>
         Déconnexion
       </div>
     </div>
@@ -40,8 +39,10 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script src="firebase.js"></script>
+<script src="icons.js"></script>
 <script src="app.js"></script>
 
 </body>

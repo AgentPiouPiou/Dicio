@@ -132,3 +132,40 @@ main{
     margin:60px 120px;
     font-size:24px;
 }
+
+.icon{
+  width:18px;
+  height:18px;
+  display:inline-block;
+  vertical-align:middle;
+  margin-right:8px;
+  stroke:currentColor;
+}
+
+/* PROFILE */
+.profile-page{
+  margin:60px 120px;
+}
+
+.profile-card{
+  display:flex;
+  align-items:center;
+  gap:30px;
+  margin-top:40px;
+}
+
+.profile-card img{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+}
+
+.profile-info h2{
+  margin:0;
+  font-size:22px;
+}
+
+.profile-info p{
+  margin:5px 0 0;
+  color:gray;
+}
