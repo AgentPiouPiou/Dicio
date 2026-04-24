@@ -12,6 +12,13 @@ function login() {
     });
 }
 
+// 🚪 LOGOUT
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "/Dicio/login.html";
+  });
+}
+
 // 🔤 Générer pseudo unique
 async function generateUsername(name) {
   let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -30,15 +37,20 @@ async function generateUsername(name) {
   }
 }
 
-// 🎯 Affichage accueil
+// 🎯 UI ACCUEIL
 function render(user) {
   document.getElementById("app").innerHTML = `
     <header class="header">
       <div class="logo">Dicio</div>
 
-      <div class="user">
+      <div class="profile" onclick="toggleMenu()">
         <img src="${user.photo}">
         <span>${user.username}</span>
+
+        <div id="dropdown" class="dropdown">
+          <div onclick="goProfile()">Profil</div>
+          <div onclick="logout()">Déconnexion</div>
+        </div>
       </div>
     </header>
 
@@ -48,10 +60,20 @@ function render(user) {
   `;
 }
 
+// 📂 MENU
+function toggleMenu() {
+  const menu = document.getElementById("dropdown");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+// 👤 PROFIL (placeholder)
+function goProfile() {
+  alert("Page profil bientôt disponible");
+}
+
 // 🔐 Vérification connexion
 firebase.auth().onAuthStateChanged(async (user) => {
 
-  // ❌ PAS CONNECTÉ
   if (!user) {
     if (!window.location.pathname.includes("login")) {
       window.location.href = "/Dicio/login.html";
@@ -59,13 +81,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
     return;
   }
 
-  // 🔎 Vérifie base
   const ref = db.collection("users").doc(user.uid);
   const doc = await ref.get();
 
   let userData;
 
-  // 🆕 CRÉATION COMPTE
   if (!doc.exists) {
     const username = await generateUsername(user.displayName);
 
@@ -81,7 +101,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
     userData = doc.data();
   }
 
-  // 🏠 Affichage seulement sur index
   if (window.location.pathname.includes("login")) {
     window.location.href = "/Dicio/";
     return;
