@@ -142,10 +142,10 @@ header{
 ========================= */
 
 .icon-svg{
-    width:18px;
-    height:18px;
-    display:inline-block;
-    stroke:currentColor;
+  width:18px;
+  height:18px;
+  display:inline-block;
+  vertical-align:middle;
 }
 
 /* =========================
