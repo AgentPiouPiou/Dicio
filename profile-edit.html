@@ -37,23 +37,40 @@
 </header>
 
 <main>
-    <div class="edit-container">
+<div class="edit-container">
 
-  <h1>Modifier Profil</h1>
+  <h1>Modifier le profil</h1>
 
-  <div class="profile-image-container">
-    <img id="editPic">
-    <div class="edit-avatar" onclick="selectImage()">
-      <span id="icon-edit"></span>
+  <div class="edit-card">
+
+    <!-- PHOTO -->
+    <img id="editPic" class="edit-avatar-big">
+
+    <!-- INPUT -->
+    <div class="input-group">
+      <label>Pseudo</label>
+
+      <input 
+        id="usernameInput" 
+        class="input" 
+        maxlength="12"
+      >
+
+      <div class="input-info">
+        <span id="charCount">0/12</span>
+      </div>
     </div>
+
+    <!-- BOUTON -->
+    <button id="saveBtn" class="save-btn" disabled>
+      Sauvegarder
+    </button>
+
+    <div id="successMsg" class="success-msg">
+      Modifications enregistrées ✔
+    </div>
+
   </div>
-
-  <input id="usernameInput" class="input">
-  <input id="idInput" class="input">
-
-  <button class="save-btn" onclick="save()">Sauvegarder</button>
-
-  <input type="file" id="fileInput" hidden>
 
 </div>
 </main>
