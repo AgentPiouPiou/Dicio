@@ -12,17 +12,19 @@
 
   <button id="loginBtn">Se connecter avec Google</button>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<!-- 1. Firebase (OBLIGATOIRE AVANT TOUT) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-  <script type="module">
-    import { loginWithGoogle, redirectIfLogged } from "/js/auth.js";
+<!-- 2. Ton config Firebase -->
+<script src="/Dicio/js/firebase.js"></script>
 
-    redirectIfLogged();
+<!-- 3. Ton code en module -->
+<script type="module">
+  import { checkAuthAndRedirect } from "/Dicio/js/router.js";
+  checkAuthAndRedirect();
+</script>
 
-    document.getElementById("loginBtn").onclick = loginWithGoogle;
-  </script>
 
 </body>
 </html>
