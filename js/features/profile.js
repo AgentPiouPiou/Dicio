@@ -1,12 +1,12 @@
+import { auth, db } from "../core/firebase.js";
+
 document.addEventListener("DOMContentLoaded", () => {
 
   auth.onAuthStateChanged(async (user) => {
 
     if (!user) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
+    const id = new URLSearchParams(window.location.search).get("id");
     if (!id) return;
 
     const snap = await db.collection("users")
@@ -26,10 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (user.email === data.email) {
       const btn = document.getElementById("editBtn");
       btn.style.display = "flex";
-
-      btn.onclick = () => {
-        window.location.href = "/Dicio/profile-edit.html";
-      };
+      btn.onclick = () => location.href = "/Dicio/profile-edit.html";
     }
 
   });
