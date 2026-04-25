@@ -6,17 +6,12 @@ export function route() {
 
     const path = window.location.pathname;
 
-    const isLogin = path.includes("/login");
-    const isAccueil = path.includes("acceuil");
-
-    // PAS connecté → login
-    if (!user && !isLogin) {
+    if (!user && !path.includes("login")) {
       window.location.href = "/Dicio/login/";
       return;
     }
 
-    // connecté → accueil
-    if (user && (isLogin || path === "/Dicio/" || path.endsWith("index.html"))) {
+    if (user && (path.includes("login") || path === "/Dicio/" || path.endsWith("index.html"))) {
       window.location.href = "/Dicio/acceuil.html";
       return;
     }
