@@ -1,5 +1,5 @@
 let userData = null;
-let newImage = null;
+let newImageBlob = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -10,10 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!user) return;
 
-    const snap = await db.collection("users")
-      .doc(user.email)
-      .get();
-
+    const snap = await db.collection("users").doc(user.email).get();
     userData = snap.data();
 
     preview.src = userData.photoURL || "/img/default-avatar.png";
@@ -22,57 +19,87 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("idInput").value = userData.userId;
   });
 
-  /* IMAGE */
+  /* ======================
+     IMAGE IMPORT + RESIZE
+  ====================== */
+
   input.addEventListener("change", (e) => {
 
     const file = e.target.files[0];
     if (!file) return;
 
-    newImage = file;
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
 
-    const reader = new FileReader();
-    reader.onload = (ev) => {
+    img.onload = () => {
 
-      preview.src = ev.target.result;
+      const size = 300; // compression taille finale
 
-      /* 👉 si pas carré → afficher popup */
-      const img = new Image();
-      img.src = ev.target.result;
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-      img.onload = () => {
-        if (img.width !== img.height) {
-          document.getElementById("cropModal").style.display = "flex";
-        }
-      };
+      canvas.width = size;
+      canvas.height = size;
+
+      /* crop centré */
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+
+      canvas.toBlob((blob) => {
+
+        newImageBlob = blob;
+
+        preview.src = URL.createObjectURL(blob);
+
+      }, "image/jpeg", 0.7); // compression forte
     };
 
-    reader.readAsDataURL(file);
   });
 
 });
 
-/* SAVE */
+/* ======================
+   SAVE (FIX)
+====================== */
 
 async function saveProfile() {
 
   const user = auth.currentUser;
-  if (!user) return;
+  if (!user || !userData) return;
 
   let updates = {};
 
-  const username = document.getElementById("usernameInput").value;
-  const userId = document.getElementById("idInput").value;
+  const username = document.getElementById("usernameInput").value.trim();
+  const userId = document.getElementById("idInput").value.trim().toLowerCase();
 
   updates.username = username;
   updates.userId = userId;
 
-  if (newImage) {
+  /* PHOTO */
+  if (newImageBlob) {
+
     const ref = storage.ref("profiles/" + user.email);
-    await ref.put(newImage);
+
+    await ref.put(newImageBlob);
+
     const url = await ref.getDownloadURL();
+
     updates.photoURL = url;
   }
 
+  /* HISTORY */
+  await db.collection("users")
+    .doc(user.email)
+    .collection("history")
+    .add({
+      ...updates,
+      date: new Date()
+    });
+
+  /* UPDATE */
   await db.collection("users")
     .doc(user.email)
     .update(updates);

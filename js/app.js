@@ -32,7 +32,12 @@ document.addEventListener("click", () => {
 
 function setAvatar(img, url) {
   if (!img) return;
+
   img.src = url || "/img/default-avatar.png";
+
+  img.onerror = () => {
+    img.src = "/img/default-avatar.png";
+  };
 }
 
 /* ================= HEADER GLOBAL ================= */
@@ -47,23 +52,62 @@ function renderHeader(data) {
 
 /* ================= USER ================= */
 
+async function generateUserId(name) {
+  let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!base) base = "user";
+
+  let id = base;
+  let i = 1;
+
+  while (true) {
+    const snap = await db.collection("users")
+      .where("userId", "==", id)
+      .get();
+
+    if (snap.empty) break;
+
+    id = base + i;
+    i++;
+  }
+
+  return id;
+}
+
 async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
 
+  const userId = await generateUserId(user.displayName);
+
   const data = {
     email: user.email,
     username: user.displayName,
     photoURL: user.photoURL,
-    userId: user.displayName.toLowerCase().replace(/\s/g, ""),
+    userId: userId,
     online: true
   };
 
   await ref.set(data);
   return data;
 }
+
+/* ================= ONLINE STATUS FIX ================= */
+
+function setOnlineStatus(isOnline) {
+  if (!auth.currentUser) return;
+
+  db.collection("users")
+    .doc(auth.currentUser.email)
+    .update({
+      online: isOnline
+    });
+}
+
+window.addEventListener("beforeunload", () => {
+  setOnlineStatus(false);
+});
 
 /* ================= AUTH ================= */
 
@@ -83,6 +127,9 @@ auth.onAuthStateChanged(async (user) => {
     .get();
 
   currentUserData = snap.data();
+
+  // ✅ USER ONLINE
+  setOnlineStatus(true);
 
   renderHeader(currentUserData);
 });

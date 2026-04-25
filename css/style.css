@@ -10,9 +10,7 @@
     font-weight: 700;
 }
 
-/* =========================
-   GLOBAL
-========================= */
+/* ================= GLOBAL ================= */
 
 *{
     transition: background 0.15s ease, transform 0.15s ease;
@@ -27,14 +25,12 @@ body{
     color:#111;
 }
 
-a, button, div, span{
+a, button{
     color:inherit;
     text-decoration:none;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* ================= HEADER ================= */
 
 header{
     position:sticky;
@@ -48,12 +44,9 @@ header{
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
     box-shadow:0 1px 8px rgba(0,0,0,0.08);
-    z-index:1000;
 }
 
-/* =========================
-   LOGO
-========================= */
+/* ================= LOGO ================= */
 
 .logo{
     font-size:20px;
@@ -63,12 +56,9 @@ header{
 
 .logo:hover{
     transform:scale(1.05);
-    opacity:0.85;
 }
 
-/* =========================
-   NAV BUTTON
-========================= */
+/* ================= NAV ================= */
 
 .nav-button{
     background:transparent;
@@ -83,12 +73,10 @@ header{
 }
 
 .nav-button:hover{
-    background:rgba(0,0,0,0.06);
+    background:rgba(0,0,0,0.05);
 }
 
-/* =========================
-   AVATAR HEADER
-========================= */
+/* ================= AVATAR ================= */
 
 .account-icon{
     width:36px;
@@ -97,25 +85,7 @@ header{
     object-fit:cover;
 }
 
-.nav-button:hover .account-icon{
-    transform:scale(1.05);
-}
-
-.account-icon:hover{
-    transform:scale(1.12);
-}
-
-/* =========================
-   TEXT
-========================= */
-
-.account-name{
-    font-size:14px;
-}
-
-/* =========================
-   DROPDOWN
-========================= */
+/* ================= DROPDOWN ================= */
 
 .dropdown{
     position:absolute;
@@ -123,20 +93,14 @@ header{
     right:0;
     background:white;
     border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.12);
-    overflow:hidden;
     display:none;
     min-width:170px;
-    z-index:999;
+    overflow:hidden;
 }
 
 .dropdown.active{
     display:block;
 }
-
-/* =========================
-   ITEMS
-========================= */
 
 .item{
     display:flex;
@@ -158,18 +122,7 @@ header{
     background:#ffecec;
 }
 
-/* =========================
-   ICONS
-========================= */
-
-.icon-svg{
-    width:18px;
-    height:18px;
-}
-
-/* =========================
-   PROFILE PAGE
-========================= */
+/* ================= PROFILE ================= */
 
 .profile-page{
     margin:60px 120px;
@@ -183,18 +136,7 @@ header{
     margin-top:40px;
 }
 
-.profile-info h2{
-    margin:0;
-}
-
-.profile-info p{
-    color:gray;
-    font-size:14px;
-}
-
-/* =========================
-   PROFILE IMAGE
-========================= */
+/* ================= PROFILE IMAGE ================= */
 
 .profile-image-container{
     position:relative;
@@ -207,97 +149,85 @@ header{
     height:100%;
     border-radius:50%;
     object-fit:cover;
-    border:2px solid rgba(0,0,0,0.1);
+    border:2px solid #ddd;
 }
 
-/* =========================
-   STATUS DOT
-========================= */
+/* ================= STATUS DOT FIX ================= */
 
 .status-dot{
     position:absolute;
-    bottom:4px;
-    right:4px;
-    width:14px;
-    height:14px;
+    bottom:6px;
+    right:6px;
+    width:18px;
+    height:18px;
     border-radius:50%;
     border:3px solid white;
 }
 
-.status-online{ background:#2ecc71; }
-.status-offline{ background:#e74c3c; }
+.status-online{
+    background:#2ecc71;
+}
 
-/* =========================
-   EDIT BUTTON (AVATAR)
-========================= */
+.status-offline{
+    background:#bbb;
+}
+
+/* ================= EDIT BUTTON AVATAR ================= */
 
 .avatar-edit-btn{
     position:absolute;
-    bottom:-6px;
-    right:-6px;
+    bottom:-5px;
+    right:-5px;
 
-    width:36px;
-    height:36px;
+    width:34px;
+    height:34px;
 
-    background:white;
     border-radius:50%;
+    background:white;
+    border:1px solid #ddd;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
     cursor:pointer;
-    box-shadow:0 3px 10px rgba(0,0,0,0.2);
+}
+
+.avatar-edit-btn:hover{
+    background:#e6e6e6;
 }
 
 .avatar-edit-btn svg{
     width:16px;
     height:16px;
-    fill:#111;
 }
 
-.avatar-edit-btn:hover{
-    background:#eaeaea;
-    transform:scale(1.08);
-}
-
-/* =========================
-   EDIT BUTTON (PROFILE TOP RIGHT)
-========================= */
+/* ================= FLOAT BUTTON PROFILE ================= */
 
 .edit-floating-btn{
     position:absolute;
-    top:110px;
-    right:140px;
+    top:90px;
+    right:120px;
 
-    width:42px;
-    height:42px;
+    width:38px;
+    height:38px;
 
     border-radius:50%;
     background:white;
+    border:1px solid #ddd;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
     cursor:pointer;
-    box-shadow:0 5px 15px rgba(0,0,0,0.15);
-}
-
-.edit-floating-btn svg{
-    width:18px;
-    height:18px;
-    fill:#111;
 }
 
 .edit-floating-btn:hover{
-    background:#eaeaea;
-    transform:scale(1.08);
+    background:#e6e6e6;
 }
 
-/* =========================
-   EDIT PAGE
-========================= */
+/* ================= EDIT PAGE ================= */
 
 .edit-container{
     margin:60px 120px;
@@ -308,21 +238,14 @@ header{
     background:white;
     padding:30px;
     border-radius:16px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.06);
-    width:380px;
+    width:360px;
+    border:1px solid #eee;
 }
 
-/* =========================
-   INPUTS
-========================= */
+/* ================= INPUT ================= */
 
 .input-group{
     margin-top:20px;
-}
-
-.input-group label{
-    font-size:14px;
-    color:#555;
 }
 
 .input{
@@ -331,7 +254,6 @@ header{
     padding:12px;
     border-radius:10px;
     border:1px solid #ddd;
-    font-size:14px;
 }
 
 .input:focus{
@@ -339,9 +261,7 @@ header{
     border:1px solid #111;
 }
 
-/* =========================
-   BUTTON
-========================= */
+/* ================= BUTTON ================= */
 
 .save-btn{
     width:100%;
@@ -351,51 +271,14 @@ header{
     border-radius:12px;
     background:#111;
     color:white;
-    font-size:14px;
     cursor:pointer;
 }
 
 .save-btn:hover{
-    transform:scale(1.03);
     background:#222;
-}
-
-.save-btn:active{
-    transform:scale(0.97);
 }
 
 .save-btn:disabled{
     opacity:0.4;
     cursor:not-allowed;
-}
-
-/* =========================
-   SUCCESS
-========================= */
-
-.success-msg{
-    margin-top:15px;
-    font-size:13px;
-    color:green;
-    opacity:0;
-    transition:opacity 0.2s;
-}
-
-.success-msg.show{
-    opacity:1;
-}
-
-/* =========================
-   ANIMATION
-========================= */
-
-@keyframes fadeInUp{
-    from{
-        opacity:0;
-        transform:translateY(8px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
 }
