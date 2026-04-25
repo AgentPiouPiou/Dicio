@@ -2,29 +2,25 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Connexion - Dicio</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Login - Dicio</title>
 </head>
+<body>
 
-<body class="center">
+<h1>Dicio</h1>
 
-  <h1>Dicio</h1>
+<button id="loginBtn">Se connecter avec Google</button>
 
-  <button id="loginBtn">Se connecter avec Google</button>
-
-<!-- 1. Firebase (OBLIGATOIRE AVANT TOUT) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-<!-- 2. Ton config Firebase -->
-<script src="/Dicio/js/firebase.js"></script>
-
-<!-- 3. Ton code en module -->
 <script type="module">
-  import { checkAuthAndRedirect } from "/Dicio/js/router.js";
-  checkAuthAndRedirect();
-</script>
+  import { loginWithGoogle } from "../js/auth.js";
+  import { route } from "../js/router.js";
 
+  route();
+
+  document.getElementById("loginBtn").onclick = loginWithGoogle;
+</script>
 
 </body>
 </html>

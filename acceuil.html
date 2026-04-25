@@ -3,28 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <title>Accueil - Dicio</title>
-  <link rel="stylesheet" href="/css/style.css">
 </head>
+<body>
 
-<body class="center">
+<h1 id="welcome"></h1>
 
-  <h1 id="welcome"></h1>
+<button onclick="logout()">Logout</button>
 
-  <button onclick="logout()">Se déconnecter</button>
-
-<!-- 1. Firebase (OBLIGATOIRE AVANT TOUT) -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-<!-- 2. Ton config Firebase -->
-<script src="/Dicio/js/firebase.js"></script>
-
-<!-- 3. Ton code en module -->
 <script type="module">
-  import { checkAuthAndRedirect } from "/Dicio/js/router.js";
-  checkAuthAndRedirect();
-</script>
+  import { auth } from "./js/firebase.js";
+  import { logout } from "./js/auth.js";
+  import { route } from "./js/router.js";
 
+  window.logout = logout;
+
+  route();
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      document.getElementById("welcome").textContent =
+        "Bienvenue " + user.displayName + " sur Dicio !";
+    }
+  });
+
+</script>
 
 </body>
 </html>
