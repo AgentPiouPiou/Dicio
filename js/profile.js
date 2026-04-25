@@ -5,26 +5,37 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  try {
-    const doc = await db.collection("users").doc(user.email).get();
+  const params = new URLSearchParams(window.location.search);
+  const userId = params.get("id");
 
-    if (!doc.exists) {
-      console.log("User introuvable");
+  if (!userId) {
+    document.body.innerHTML = "<h1>Profil introuvable</h1>";
+    return;
+  }
+
+  try {
+    const snap = await db.collection("users")
+      .where("userId", "==", userId)
+      .get();
+
+    if (snap.empty) {
+      document.body.innerHTML = "<h1>Utilisateur introuvable</h1>";
       return;
     }
 
-    const data = doc.data();
+    const data = snap.docs[0].data();
 
-    // DOM
-    const pic = document.getElementById("profilePic");
-    const name = document.getElementById("profileName");
-    const email = document.getElementById("profileEmail");
-    const id = document.getElementById("profileId");
+    // HEADER
+    const headerName = document.getElementById("userName");
+    const headerPhoto = document.getElementById("userPhoto");
 
-    if (pic) pic.src = data.photoURL;
-    if (name) name.textContent = data.username;
-    if (email) email.textContent = data.email;
-    if (id) id.textContent = data.userId;
+    if (headerName) headerName.textContent = user.displayName;
+    if (headerPhoto) headerPhoto.src = user.photoURL;
+
+    // PROFIL
+    document.getElementById("profilePic").src = data.photoURL;
+    document.getElementById("profileName").textContent = data.username;
+    document.getElementById("profileId").textContent = data.userId;
 
   } catch (e) {
     console.error(e);

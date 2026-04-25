@@ -9,7 +9,8 @@ function goHome() {
 }
 
 function goProfile() {
-  window.location.href = "/Dicio/profile.html";
+  if (!currentUserData) return;
+  window.location.href = "/Dicio/profile.html?id=" + currentUserData.userId;
 }
 
 function logout() {
@@ -80,7 +81,7 @@ function renderHeader(user) {
 }
 
 /* ======================
-   WELCOME TEXT
+   WELCOME
 ====================== */
 
 function renderWelcome(user) {
@@ -93,21 +94,51 @@ function renderWelcome(user) {
 }
 
 /* ======================
+   USER ID UNIQUE
+====================== */
+
+async function generateUniqueUserId(name) {
+
+  let base = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+
+  let id = base;
+  let i = 1;
+
+  while (true) {
+    const snap = await db.collection("users")
+      .where("userId", "==", id)
+      .get();
+
+    if (snap.empty) break;
+
+    id = base + i;
+    i++;
+  }
+
+  return id;
+}
+
+/* ======================
    FIRESTORE
 ====================== */
 
 async function saveUserIfNeeded(user) {
+
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
+
+  const userId = await generateUniqueUserId(user.displayName);
 
   const data = {
     email: user.email,
     username: user.displayName,
     displayName: user.displayName,
     photoURL: user.photoURL,
-    userId: user.displayName.replace(/\s/g, "")
+    userId: userId
   };
 
   await ref.set(data);
@@ -124,11 +155,6 @@ auth.onAuthStateChanged(async (user) => {
     if (!location.pathname.includes("login")) {
       location.href = "/Dicio/login.html";
     }
-    return;
-  }
-
-  if (location.pathname.includes("login")) {
-    location.href = "/Dicio/";
     return;
   }
 
