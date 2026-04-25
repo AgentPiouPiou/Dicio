@@ -1,37 +1,81 @@
 let userData = null;
+let newImage = null;
 
-/* INIT */
-auth.onAuthStateChanged(async (user) => {
+document.addEventListener("DOMContentLoaded", () => {
 
-  if (!user) {
-    location.href = "/Dicio/login.html";
-    return;
-  }
+  const input = document.getElementById("fileInput");
+  const preview = document.getElementById("editPic");
 
-  const snap = await db.collection("users").doc(user.email).get();
-  userData = snap.data();
+  auth.onAuthStateChanged(async (user) => {
 
-  renderHeader(userData);
+    if (!user) return;
 
-  document.getElementById("usernameInput").value = userData.username;
-  document.getElementById("idInput").value = userData.userId;
-  document.getElementById("editPic").src = userData.photoURL;
+    const snap = await db.collection("users")
+      .doc(user.email)
+      .get();
+
+    userData = snap.data();
+
+    preview.src = userData.photoURL || "/img/default-avatar.png";
+
+    document.getElementById("usernameInput").value = userData.username;
+    document.getElementById("idInput").value = userData.userId;
+  });
+
+  /* IMAGE */
+  input.addEventListener("change", (e) => {
+
+    const file = e.target.files[0];
+    if (!file) return;
+
+    newImage = file;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+
+      preview.src = ev.target.result;
+
+      /* 👉 si pas carré → afficher popup */
+      const img = new Image();
+      img.src = ev.target.result;
+
+      img.onload = () => {
+        if (img.width !== img.height) {
+          document.getElementById("cropModal").style.display = "flex";
+        }
+      };
+    };
+
+    reader.readAsDataURL(file);
+  });
+
 });
 
 /* SAVE */
-document.getElementById("saveBtn").onclick = async () => {
+
+async function saveProfile() {
 
   const user = auth.currentUser;
+  if (!user) return;
 
-  let username = document.getElementById("usernameInput").value.trim();
-  let userId = document.getElementById("idInput").value.trim().toLowerCase();
+  let updates = {};
 
-  userId = userId.replace(/[^a-z0-9]/g, "");
+  const username = document.getElementById("usernameInput").value;
+  const userId = document.getElementById("idInput").value;
 
-  await db.collection("users").doc(user.email).update({
-    username,
-    userId
-  });
+  updates.username = username;
+  updates.userId = userId;
+
+  if (newImage) {
+    const ref = storage.ref("profiles/" + user.email);
+    await ref.put(newImage);
+    const url = await ref.getDownloadURL();
+    updates.photoURL = url;
+  }
+
+  await db.collection("users")
+    .doc(user.email)
+    .update(updates);
 
   window.location.href = "/Dicio/profile.html?id=" + userId;
-};
+}

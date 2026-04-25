@@ -1,22 +1,12 @@
 @font-face {
     font-family: "Inter";
     src: url("font/static/Inter_18pt-Light.ttf") format("truetype");
-    font-weight: 300;
 }
 
-@font-face {
-    font-family: "Inter Bold";
-    src: url("font/static/Inter_18pt-Bold.ttf") format("truetype");
-    font-weight: 700;
-}
-
-/* =========================
-   GLOBAL
-========================= */
+/* GLOBAL */
 
 *{
     transition: background 0.15s ease, transform 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
 }
 
 body{
@@ -26,16 +16,12 @@ body{
     color:#111;
 }
 
-/* empêcher texte bleu mobile */
-
 a, button, div, span{
     color:inherit;
     text-decoration:none;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 
 header{
     position:sticky;
@@ -48,13 +34,9 @@ header{
     border-radius:15px;
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
-    box-shadow:0 1px 8px rgba(0,0,0,0.08);
-    z-index:1000;
 }
 
-/* =========================
-   LOGO
-========================= */
+/* LOGO */
 
 .logo{
     font-size:20px;
@@ -64,12 +46,9 @@ header{
 
 .logo:hover{
     transform:scale(1.05);
-    opacity:0.85;
 }
 
-/* =========================
-   NAV BUTTON
-========================= */
+/* NAV */
 
 .nav-button{
     background:transparent;
@@ -87,23 +66,6 @@ header{
     background:rgba(0,0,0,0.06);
 }
 
-/* =========================
-   USER
-========================= */
-
-.account-name{
-    font-size:14px;
-}
-
-/* zoom léger */
-.nav-button:hover .account-name{
-    transform:scale(1.05);
-}
-
-/* =========================
-   AVATAR
-========================= */
-
 .account-icon{
     width:36px;
     height:36px;
@@ -111,28 +73,15 @@ header{
     object-fit:cover;
 }
 
-/* hover doux */
-.nav-button:hover .account-icon{
-    transform:scale(1.05);
-}
-
-/* hover fort direct */
 .account-icon:hover{
-    transform:scale(1.12);
+    transform:scale(1.1);
 }
-
-/* =========================
-   CHEVRON
-========================= */
 
 .chevron-icon{
     width:12px;
-    opacity:0.7;
 }
 
-/* =========================
-   DROPDOWN
-========================= */
+/* DROPDOWN */
 
 .dropdown{
     position:absolute;
@@ -140,116 +89,94 @@ header{
     right:0;
     background:white;
     border-radius:12px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.12);
-    overflow:hidden;
     display:none;
-    min-width:170px;
-    z-index:999;
 }
 
 .dropdown.active{
     display:block;
 }
 
-/* =========================
-   ITEMS
-========================= */
+/* ITEMS */
 
 .item{
-    display:flex;
-    align-items:center;
-    gap:10px;
     padding:12px;
+    display:flex;
+    gap:10px;
     cursor:pointer;
 }
 
-/* hover sans déplacement */
-.item.black:hover{
+.item:hover{
     background:#f2f2f2;
 }
 
 .item.red{
-    color:#e63946;
+    color:red;
 }
 
-.item.red:hover{
-    background:#ffecec;
-}
+/* MAIN */
 
-/* =========================
-   ICONS
-========================= */
-
-.icon-svg{
-    width:18px;
-    height:18px;
-    display:inline-block;
-}
-
-/* =========================
-   MAIN
-========================= */
-
-main{
+main, .profile-page, .edit-container{
     margin:60px 120px;
 }
 
-/* =========================
-   WELCOME
-========================= */
-
-#welcome{
-    font-size:26px;
-    font-weight:400; /* PAS GRAS */
-    animation:fadeInUp 0.4s ease;
-}
-
-/* =========================
-   PROFILE
-========================= */
-
-.profile-page{
-    margin:60px 120px;
-}
+/* PROFILE */
 
 .profile-card{
     display:flex;
-    align-items:center;
     gap:30px;
     margin-top:40px;
-}
-
-.profile-card img{
-    width:110px;
-    height:110px;
-    border-radius:50%;
-    object-fit:cover;
-    border:2px solid rgba(0,0,0,0.1);
-}
-
-.profile-info h2{
-    margin:0;
+    align-items:center;
 }
 
 .profile-info p{
     color:gray;
-    font-size:14px;
 }
 
-/* =========================
-   EDIT BUTTON
-========================= */
+/* IMAGE */
+
+.profile-image-container{
+    position:relative;
+    width:110px;
+    height:110px;
+}
+
+.profile-image-container img{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+/* STATUS */
+
+.status-dot{
+    position:absolute;
+    bottom:5px;
+    right:5px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    border:2px solid white;
+}
+
+.status-online{ background:#2ecc71; }
+.status-offline{ background:#e74c3c; }
+
+/* EDIT BTN */
+
+.edit-container-top{
+    display:flex;
+    justify-content:flex-end;
+}
 
 .edit-btn{
-    position:absolute;
-    top:0;
-    right:0;
+    width:35px;
+    height:35px;
+    background:#f2f2f2;
+    border-radius:50%;
     display:flex;
     align-items:center;
-    gap:6px;
-    padding:6px 10px;
-    border-radius:10px;
-    background:#f2f2f2;
+    justify-content:center;
     cursor:pointer;
 }
 
@@ -257,128 +184,89 @@ main{
     background:#e6e6e6;
 }
 
-/* =========================
-   EDIT UI
-========================= */
-
-.edit-container{
-    margin:60px 120px;
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-}
+/* EDIT PAGE */
 
 .edit-card{
     margin-top:30px;
     background:white;
     padding:30px;
     border-radius:16px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.06);
     width:400px;
 }
 
-/* avatar */
+/* IMAGE EDIT */
 
+.profile-image-container.edit{
+    width:130px;
+    height:130px;
+    margin-bottom:20px;
+}
 
 .edit-avatar{
     position:absolute;
-    bottom:-8px;
-    right:-8px;
-    width:35px;
-    height:35px;
+    bottom:-5px;
+    right:-5px;
+    width:38px;
+    height:38px;
     background:white;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
     cursor:pointer;
 }
 
-.edit-avatar:hover{
-    transform:scale(1.1);
-}
-
-/* input */
-
-.input-group label{
-    font-size:14px;
-    color:#555;
-}
+/* INPUT */
 
 .input{
     width:100%;
-    margin-top:8px;
+    margin-top:10px;
     padding:12px;
     border-radius:10px;
     border:1px solid #ddd;
-    font-size:14px;
 }
 
-/* focus propre */
 .input:focus{
     outline:none;
-    border:1px solid #111;
+    border:1px solid black;
 }
 
-/* info dessous */
-
-.input-info{
-    display:flex;
-    justify-content:flex-end;
-    font-size:12px;
-    color:#888;
-    margin-top:5px;
-}
-
-/* bouton */
+/* BUTTON */
 
 .save-btn{
     width:100%;
-    margin-top:25px;
+    margin-top:20px;
     padding:12px;
+    background:black;
+    color:white;
     border:none;
     border-radius:12px;
-    background:#111;
-    color:white;
-    font-size:14px;
     cursor:pointer;
 }
 
-/* désactivé */
+/* CROP POPUP */
 
-.save-btn:disabled{
-    opacity:0.4;
-    cursor:not-allowed;
+#cropModal{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:none;
+    background:rgba(0,0,0,0.6);
+    align-items:center;
+    justify-content:center;
 }
 
-/* success */
-
-.success-msg{
-    opacity:0;
-    transition:opacity 0.2s;
+.crop-box{
+    width:250px;
+    height:250px;
+    border:2px dashed white;
 }
 
-.success-msg.show{
-    opacity:1;
+/* ICON */
+
+.icon-svg{
+    width:18px;
+    height:18px;
 }
-
-.input-group{
-    margin-top:20px;
-}
-
-/* =========================
-   ANIMATION
-========================= */
-
-@keyframes fadeInUp{
-    from{
-        opacity:0;
-        transform:translateY(8px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-

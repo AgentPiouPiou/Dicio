@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+  <meta charset="UTF-8">
   <title>Profil</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <header>
@@ -12,6 +14,24 @@
   <button class="nav-button" onclick="toggleMenu(event)">
     <img id="userPhoto" class="account-icon">
     <span id="userName"></span>
+
+    <svg class="chevron-icon" viewBox="0 0 24 24">
+      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor"/>
+    </svg>
+
+    <div class="dropdown" id="dropdown">
+
+      <div class="item black" onclick="goProfile()">
+        <span id="icon-user"></span>
+        <span>Profil</span>
+      </div>
+
+      <div class="item red" onclick="logout()">
+        <span id="icon-logout"></span>
+        <span>Déconnexion</span>
+      </div>
+
+    </div>
   </button>
 </header>
 
@@ -19,16 +39,27 @@
 
   <h1>Profil</h1>
 
-  <div id="editBtn" class="edit-btn" style="display:none;">
-    Modifier
+  <!-- bouton modifier -->
+  <div class="edit-container-top">
+    <div id="editBtn" class="edit-btn" style="display:none;">
+      <svg class="icon-svg" viewBox="0 0 24 24">
+        <path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25z"/>
+      </svg>
+    </div>
   </div>
 
   <div class="profile-card">
-    <img id="profilePic">
-    <div>
+
+    <div class="profile-image-container">
+      <img id="profilePic">
+      <div id="statusDot" class="status-dot"></div>
+    </div>
+
+    <div class="profile-info">
       <h2 id="profileName"></h2>
       <p id="profileId"></p>
     </div>
+
   </div>
 
 </div>

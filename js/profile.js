@@ -1,65 +1,46 @@
-let profileData = null;
+document.addEventListener("DOMContentLoaded", () => {
 
-/* GET ID */
-function getProfileId() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("id");
-}
+  auth.onAuthStateChanged(async (user) => {
 
-/* LOAD PROFILE */
-async function loadProfile(user) {
+    if (!user) return;
 
-  const id = getProfileId();
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
 
-  if (!id) {
-    const snap = await db.collection("users").doc(user.email).get();
-    profileData = snap.data();
-  } else {
+    if (!id) return;
+
     const snap = await db.collection("users")
       .where("userId", "==", id)
       .get();
 
-    if (snap.empty) {
-      alert("Profil introuvable");
-      return;
+    if (snap.empty) return;
+
+    const data = snap.docs[0].data();
+
+    document.getElementById("profilePic").src =
+      data.photoURL || "/img/default-avatar.png";
+
+    document.getElementById("profileName").textContent = data.username;
+    document.getElementById("profileId").textContent = "/" + data.userId;
+
+    /* bouton modifier uniquement si c'est toi */
+    if (user.email === data.email) {
+      const btn = document.getElementById("editBtn");
+      btn.style.display = "flex";
+      btn.onclick = () => {
+        window.location.href = "/Dicio/profile-edit.html";
+      };
     }
 
-    profileData = snap.docs[0].data();
-  }
+    /* STATUS */
+    const dot = document.getElementById("statusDot");
 
-  renderProfile(user);
-}
+    if (data.online) {
+      dot.classList.add("status-online");
+    } else {
+      dot.classList.add("status-offline");
+    }
 
-/* RENDER */
-function renderProfile(user) {
+  });
 
-  const pic = document.getElementById("profilePic");
-  const name = document.getElementById("profileName");
-  const id = document.getElementById("profileId");
-  const editBtn = document.getElementById("editBtn");
-
-  pic.src = profileData.photoURL || "/img/default-avatar.png";
-  name.textContent = profileData.username;
-  id.textContent = "@" + profileData.userId;
-
-  if (user.email === profileData.email) {
-    editBtn.style.display = "flex";
-    editBtn.onclick = () => {
-      window.location.href = "/Dicio/profile-edit.html";
-    };
-  }
-}
-
-/* AUTH */
-auth.onAuthStateChanged(async (user) => {
-
-  if (!user) {
-    location.href = "/Dicio/login.html";
-    return;
-  }
-
-  const snap = await db.collection("users").doc(user.email).get();
-  renderHeader(snap.data());
-
-  await loadProfile(user);
 });

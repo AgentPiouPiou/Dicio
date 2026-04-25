@@ -1,6 +1,7 @@
 let currentUserData = null;
 
-/* NAVIGATION */
+/* ================= NAV ================= */
+
 function goHome() {
   window.location.href = "/Dicio/";
 }
@@ -16,13 +17,8 @@ function logout() {
   });
 }
 
-/* LOGIN */
-function login() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
-}
+/* ================= MENU ================= */
 
-/* MENU */
 function toggleMenu(e) {
   e.stopPropagation();
   document.getElementById("dropdown")?.classList.toggle("active");
@@ -32,55 +28,45 @@ document.addEventListener("click", () => {
   document.getElementById("dropdown")?.classList.remove("active");
 });
 
-/* AVATAR */
+/* ================= AVATAR ================= */
+
 function setAvatar(img, url) {
   if (!img) return;
   img.src = url || "/img/default-avatar.png";
 }
 
-/* HEADER */
+/* ================= HEADER GLOBAL ================= */
+
 function renderHeader(data) {
-  setAvatar(document.getElementById("userPhoto"), data.photoURL);
+  const photo = document.getElementById("userPhoto");
   const name = document.getElementById("userName");
-  if (name) name.textContent = data.username;
+
+  if (photo) setAvatar(photo, data.photoURL);
+  if (name) name.textContent = data.username || "Utilisateur";
 }
 
-/* USER ID UNIQUE */
-async function generateUniqueUserId(name) {
-  let base = name.toLowerCase().replace(/[^a-z0-9]/g, "") || "user";
-  let id = base;
-  let i = 1;
+/* ================= USER ================= */
 
-  while (true) {
-    const snap = await db.collection("users").where("userId", "==", id).get();
-    if (snap.empty) break;
-    id = base + i;
-    i++;
-  }
-  return id;
-}
-
-/* CREATE USER */
 async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
 
   if (snap.exists) return snap.data();
 
-  const userId = await generateUniqueUserId(user.displayName);
-
   const data = {
     email: user.email,
     username: user.displayName,
     photoURL: user.photoURL,
-    userId
+    userId: user.displayName.toLowerCase().replace(/\s/g, ""),
+    online: true
   };
 
   await ref.set(data);
   return data;
 }
 
-/* AUTH */
+/* ================= AUTH ================= */
+
 auth.onAuthStateChanged(async (user) => {
 
   if (!user) {
@@ -92,7 +78,10 @@ auth.onAuthStateChanged(async (user) => {
 
   currentUserData = await saveUserIfNeeded(user);
 
-  const snap = await db.collection("users").doc(user.email).get();
+  const snap = await db.collection("users")
+    .doc(user.email)
+    .get();
+
   currentUserData = snap.data();
 
   renderHeader(currentUserData);
