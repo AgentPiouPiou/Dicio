@@ -44,6 +44,7 @@ header{
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
     box-shadow:0 1px 8px rgba(0,0,0,0.08);
+    z-index:1000;
 }
 
 /* ================= LOGO ================= */
@@ -122,26 +123,34 @@ header{
     background:#ffecec;
 }
 
+/* ================= ICONS ================= */
+
+.icon-svg{
+    width:18px;
+    height:18px;
+}
+
 /* ================= PROFILE ================= */
 
 .profile-page{
-    margin:60px 120px;
-    position:relative;
+    margin:80px 120px;
 }
 
-.profile-card{
+/* structure propre */
+
+.profile-header{
     display:flex;
     align-items:center;
-    gap:30px;
-    margin-top:40px;
+    gap:25px;
+    position:relative;
 }
 
 /* ================= PROFILE IMAGE ================= */
 
 .profile-image-container{
     position:relative;
-    width:120px;
-    height:120px;
+    width:110px;
+    height:110px;
 }
 
 .profile-image-container img{
@@ -152,32 +161,26 @@ header{
     border:2px solid #ddd;
 }
 
-/* ================= STATUS DOT FIX ================= */
+/* ================= PROFILE TEXT ================= */
 
-.status-dot{
-    position:absolute;
-    bottom:6px;
-    right:6px;
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    border:3px solid white;
+.profile-info h2{
+    margin:0;
+    font-size:22px;
+    font-weight:600;
 }
 
-.status-online{
-    background:#2ecc71;
+.profile-info p{
+    margin-top:5px;
+    color:#777;
+    font-size:14px;
 }
 
-.status-offline{
-    background:#bbb;
-}
-
-/* ================= EDIT BUTTON AVATAR ================= */
+/* ================= EDIT BUTTON (AVATAR) ================= */
 
 .avatar-edit-btn{
     position:absolute;
-    bottom:-5px;
-    right:-5px;
+    bottom:-6px;
+    right:-6px;
 
     width:34px;
     height:34px;
@@ -202,12 +205,12 @@ header{
     height:16px;
 }
 
-/* ================= FLOAT BUTTON PROFILE ================= */
+/* ================= EDIT BUTTON (TOP RIGHT PROFIL) ================= */
 
 .edit-floating-btn{
     position:absolute;
-    top:90px;
-    right:120px;
+    top:-10px;
+    right:-10px;
 
     width:38px;
     height:38px;
@@ -227,10 +230,15 @@ header{
     background:#e6e6e6;
 }
 
+.edit-floating-btn svg{
+    width:16px;
+    height:16px;
+}
+
 /* ================= EDIT PAGE ================= */
 
 .edit-container{
-    margin:60px 120px;
+    margin:80px 120px;
 }
 
 .edit-card{
@@ -248,12 +256,18 @@ header{
     margin-top:20px;
 }
 
+.input-group label{
+    font-size:14px;
+    color:#555;
+}
+
 .input{
     width:100%;
     margin-top:8px;
     padding:12px;
     border-radius:10px;
     border:1px solid #ddd;
+    font-size:14px;
 }
 
 .input:focus{
@@ -271,6 +285,7 @@ header{
     border-radius:12px;
     background:#111;
     color:white;
+    font-size:14px;
     cursor:pointer;
 }
 
@@ -278,7 +293,35 @@ header{
     background:#222;
 }
 
+.save-btn:active{
+    transform:scale(0.97);
+}
+
 .save-btn:disabled{
     opacity:0.4;
     cursor:not-allowed;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px){
+
+    header{
+        margin:10px 20px;
+    }
+
+    .profile-page,
+    .edit-container{
+        margin:40px 20px;
+    }
+
+    .profile-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .edit-floating-btn{
+        top:0;
+        right:0;
+    }
 }

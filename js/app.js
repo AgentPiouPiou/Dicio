@@ -40,7 +40,7 @@ function setAvatar(img, url) {
   };
 }
 
-/* ================= HEADER GLOBAL ================= */
+/* ================= HEADER ================= */
 
 function renderHeader(data) {
   const photo = document.getElementById("userPhoto");
@@ -85,29 +85,12 @@ async function saveUserIfNeeded(user) {
     email: user.email,
     username: user.displayName,
     photoURL: user.photoURL,
-    userId: userId,
-    online: true
+    userId: userId
   };
 
   await ref.set(data);
   return data;
 }
-
-/* ================= ONLINE STATUS FIX ================= */
-
-function setOnlineStatus(isOnline) {
-  if (!auth.currentUser) return;
-
-  db.collection("users")
-    .doc(auth.currentUser.email)
-    .update({
-      online: isOnline
-    });
-}
-
-window.addEventListener("beforeunload", () => {
-  setOnlineStatus(false);
-});
 
 /* ================= AUTH ================= */
 
@@ -127,9 +110,6 @@ auth.onAuthStateChanged(async (user) => {
     .get();
 
   currentUserData = snap.data();
-
-  // ✅ USER ONLINE
-  setOnlineStatus(true);
 
   renderHeader(currentUserData);
 });

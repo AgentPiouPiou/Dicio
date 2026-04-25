@@ -16,48 +16,47 @@
     <span id="userName"></span>
 
     <svg class="chevron-icon" viewBox="0 0 24 24">
-      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor"/>
+      <path d="M6 9l6 6 6-6" stroke="currentColor" fill="none"/>
     </svg>
 
     <div class="dropdown" id="dropdown">
+
       <div class="item black" onclick="goProfile()">
-        <span id="icon-user"></span>
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M12 12a5 5 0 100-10 5 5 0 000 10zM4 22a8 8 0 0116 0"/>
+        </svg>
         <span>Profil</span>
       </div>
 
       <div class="item red" onclick="logout()">
-        <span id="icon-logout"></span>
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M16 17l5-5-5-5M21 12H9"/>
+        </svg>
         <span>Déconnexion</span>
       </div>
+
     </div>
   </button>
 </header>
 
 <div class="profile-page">
 
-  <h1>Profil</h1>
-
-  <!-- bouton modifier (top right sous header) -->
-  <div id="editBtn" class="edit-floating-btn" style="display:none;">
-    <svg viewBox="0 0 24 24">
-      <path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25z"/>
-    </svg>
-  </div>
-
-  <div class="profile-card">
+  <div class="profile-header">
 
     <div class="profile-image-container">
-
       <img id="profilePic">
-
-      <!-- status -->
-      <div id="statusDot" class="status-dot"></div>
-
     </div>
 
     <div class="profile-info">
       <h2 id="profileName"></h2>
       <p id="profileId"></p>
+    </div>
+
+    <!-- bouton edit -->
+    <div id="editBtn" class="edit-floating-btn" style="display:none;">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25z"/>
+      </svg>
     </div>
 
   </div>
