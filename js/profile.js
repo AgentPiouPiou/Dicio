@@ -1,57 +1,177 @@
+let userData = null;
+let newFile = null;
+
+/* ======================
+   HEADER
+====================== */
+
+function renderHeader(data) {
+  document.getElementById("userPhoto").src = data.photoURL;
+  document.getElementById("userName").textContent = data.username;
+}
+
+function goHome() {
+  window.location.href = "/Dicio/";
+}
+
+/* ======================
+   INIT USER
+====================== */
+
 auth.onAuthStateChanged(async (user) => {
 
   if (!user) {
-    location.href = "/Dicio/login.html";
+    window.location.href = "/Dicio/login.html";
     return;
   }
 
-  const params = new URLSearchParams(location.search);
-  const userId = params.get("id");
+  const ref = db.collection("users").doc(user.email);
+  const snap = await ref.get();
 
-  const snap = await db.collection("users")
-    .where("userId", "==", userId)
-    .get();
+  if (!snap.exists) return;
 
-  if (snap.empty) return;
+  userData = snap.data();
 
-  const data = snap.docs[0].data();
+  renderHeader(userData);
 
-  document.getElementById("profilePic").src = data.photoURL;
-  document.getElementById("profileName").textContent = data.username;
-  document.getElementById("profileId").textContent = data.userId;
+  /* preload inputs */
+  document.getElementById("usernameInput").value = userData.username || "";
+  document.getElementById("idInput").value = userData.userId || "";
 
-  // header
-  document.getElementById("userPhoto").src = user.photoURL;
-  document.getElementById("userName").textContent = user.displayName;
-
-  // bouton modifier si c'est toi
-  if (user.email === data.email) {
-    const btn = document.getElementById("editBtn");
-    btn.style.display = "flex";
-
-    btn.onclick = () => {
-      location.href = "/Dicio/profile-edit.html";
-    };
-  }
+  document.getElementById("editPic").src = userData.photoURL || "/img/default-avatar.png";
 });
 
-function loadProfile(userEmail) {
+/* ======================
+   IMAGE PREVIEW
+====================== */
 
-  db.collection("users").doc(userEmail)
-    .onSnapshot((doc) => {
+document.getElementById("fileInput").addEventListener("change", (e) => {
 
-      const data = doc.data();
+  const file = e.target.files[0];
+  if (!file) return;
 
-      document.getElementById("profilePic").src = data.photoURL;
+  newFile = file;
 
-      const dot = document.getElementById("statusDot");
+  const reader = new FileReader();
 
-      if (!dot) return;
+  reader.onload = (ev) => {
+    document.getElementById("editPic").src = ev.target.result;
+  };
 
-      if (data.online) {
-        dot.className = "status-dot status-online";
-      } else {
-        dot.className = "status-dot status-offline";
+  reader.readAsDataURL(file);
+});
+
+/* ======================
+   SAVE PROFILE
+====================== */
+
+document.getElementById("saveBtn").addEventListener("click", async () => {
+
+  const user = auth.currentUser;
+  if (!user || !userData) return;
+
+  let username = document.getElementById("usernameInput").value.trim();
+  let userId = document.getElementById("idInput").value.trim().toLowerCase();
+
+  const updates = {};
+
+  /* ======================
+     USERNAME (MAX 20)
+  ====================== */
+
+  if (username) {
+    username = username.slice(0, 20);
+
+    if (username !== userData.username) {
+      updates.username = username;
+    }
+  }
+
+  /* ======================
+     USER ID CLEAN + UNIQUE
+  ====================== */
+
+  if (userId) {
+
+    userId = userId
+      .replace(/[^a-z0-9]/g, "")
+      .slice(0, 20);
+
+    if (userId !== userData.userId) {
+
+      const check = await db.collection("users")
+        .where("userId", "==", userId)
+        .get();
+
+      if (!check.empty) {
+        alert("ID déjà utilisé");
+        return;
       }
+
+      updates.userId = userId;
+    }
+  }
+
+  /* ======================
+     PHOTO UPLOAD
+  ====================== */
+
+  if (newFile) {
+
+    const storageRef = storage.ref("profiles/" + user.email);
+
+    await storageRef.put(newFile);
+
+    const url = await storageRef.getDownloadURL();
+
+    updates.photoURL = url;
+  }
+
+  /* ======================
+     NO CHANGE
+  ====================== */
+
+  if (Object.keys(updates).length === 0) return;
+
+  /* ======================
+     HISTORY FIRESTORE
+  ====================== */
+
+  await db.collection("users")
+    .doc(user.email)
+    .collection("history")
+    .add({
+      ...updates,
+      date: firebase.firestore.FieldValue.serverTimestamp()
     });
-}
+
+  /* ======================
+     UPDATE USER
+  ====================== */
+
+  await db.collection("users")
+    .doc(user.email)
+    .set(updates, { merge: true });
+
+  /* ======================
+     UPDATE LOCAL STATE
+  ====================== */
+
+  userData = {
+    ...userData,
+    ...updates
+  };
+
+  renderHeader(userData);
+
+  /* ======================
+     SUCCESS FEEDBACK
+  ====================== */
+
+  const msg = document.getElementById("successMsg");
+  msg.classList.add("show");
+
+  setTimeout(() => {
+    window.location.href = "/Dicio/profile.html?id=" + userData.userId;
+  }, 800);
+});

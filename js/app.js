@@ -18,10 +18,10 @@ function logout() {
   const user = auth.currentUser;
 
   if (user) {
-    db.collection("users").doc(user.email).update({
+    db.collection("users").doc(user.email).set({
       online: false,
-      lastSeen: new Date()
-    });
+      lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
   }
 
   auth.signOut().then(() => {
@@ -30,7 +30,7 @@ function logout() {
 }
 
 /* ======================
-   LOGIN
+   LOGIN GOOGLE
 ====================== */
 
 function login() {
@@ -39,7 +39,7 @@ function login() {
 }
 
 /* ======================
-   MENU
+   MENU DROPDOWN
 ====================== */
 
 function toggleMenu(e) {
@@ -66,6 +66,20 @@ function loadIcons() {
 document.addEventListener("DOMContentLoaded", loadIcons);
 
 /* ======================
+   AVATAR SAFE
+====================== */
+
+function setAvatar(img, url) {
+  if (!img) return;
+
+  img.src = url || "/img/default-avatar.png";
+
+  img.onerror = () => {
+    img.src = "/img/default-avatar.png";
+  };
+}
+
+/* ======================
    HEADER
 ====================== */
 
@@ -74,10 +88,8 @@ function renderHeader(data) {
   const photo = document.getElementById("userPhoto");
   const name = document.getElementById("userName");
 
-  if (photo) photo.src = data.photoURL;
-  if (name) name.textContent = data.username;
-
-  // status dot header (optionnel)
+  if (photo) setAvatar(photo, data.photoURL);
+  if (name) name.textContent = data.username || "Utilisateur";
 }
 
 /* ======================
@@ -85,6 +97,7 @@ function renderHeader(data) {
 ====================== */
 
 function renderWelcome(data) {
+
   const welcome = document.getElementById("welcome");
 
   if (welcome) {
@@ -99,6 +112,7 @@ function renderWelcome(data) {
 async function generateUniqueUserId(name) {
 
   let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+
   if (!base) base = "user";
 
   let id = base;
@@ -120,7 +134,7 @@ async function generateUniqueUserId(name) {
 }
 
 /* ======================
-   CREATE USER IF NEEDED
+   CREATE USER IF NOT EXISTS
 ====================== */
 
 async function saveUserIfNeeded(user) {
@@ -139,7 +153,7 @@ async function saveUserIfNeeded(user) {
     photoURL: user.photoURL,
     userId: userId,
     online: true,
-    lastSeen: new Date()
+    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
   };
 
   await ref.set(data);
@@ -148,18 +162,18 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   ONLINE STATUS
+   ONLINE STATUS FIX
 ====================== */
 
-async function setOnlineStatus(state) {
+function setOnlineStatus(state) {
 
   const user = auth.currentUser;
   if (!user) return;
 
-  await db.collection("users").doc(user.email).update({
+  return db.collection("users").doc(user.email).set({
     online: state,
-    lastSeen: new Date()
-  });
+    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
 }
 
 /* ======================
@@ -175,19 +189,23 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
+  // création si besoin
   currentUserData = await saveUserIfNeeded(user);
 
+  // récupération Firestore (source unique)
   const snap = await db.collection("users").doc(user.email).get();
   currentUserData = snap.data();
 
+  // UI
   renderHeader(currentUserData);
   renderWelcome(currentUserData);
 
+  // ONLINE = TRUE
   await setOnlineStatus(true);
 });
 
 /* ======================
-   OFFLINE ON CLOSE
+   OFFLINE CLEAN EXIT
 ====================== */
 
 window.addEventListener("beforeunload", () => {
@@ -195,13 +213,8 @@ window.addEventListener("beforeunload", () => {
   const user = auth.currentUser;
   if (!user) return;
 
-  navigator.sendBeacon(
-    "offline",
-    JSON.stringify({ email: user.email })
-  );
-
-  db.collection("users").doc(user.email).update({
+  db.collection("users").doc(user.email).set({
     online: false,
-    lastSeen: new Date()
-  });
+    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
 });
