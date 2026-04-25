@@ -279,24 +279,12 @@ main{
 
 /* avatar */
 
-
-.edit-avatar{
-    position:absolute;
-    bottom:-8px;
-    right:-8px;
-    width:35px;
-    height:35px;
-    background:white;
+.edit-avatar-big{
+    width:90px;
+    height:90px;
     border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 2px 6px rgba(0,0,0,0.2);
-    cursor:pointer;
-}
-
-.edit-avatar:hover{
-    transform:scale(1.1);
+    object-fit:cover;
+    margin-bottom:25px;
 }
 
 /* input */
@@ -355,6 +343,9 @@ main{
 /* success */
 
 .success-msg{
+    margin-top:15px;
+    font-size:13px;
+    color:green;
     opacity:0;
     transition:opacity 0.2s;
 }
@@ -381,4 +372,3 @@ main{
         transform:translateY(0);
     }
 }
-
