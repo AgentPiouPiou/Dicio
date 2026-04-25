@@ -4,9 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!user) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
+    const id = new URLSearchParams(window.location.search).get("id");
     if (!id) return;
 
     const snap = await db.collection("users")
@@ -23,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("profileName").textContent = data.username;
     document.getElementById("profileId").textContent = "/" + data.userId;
 
-    /* bouton modifier uniquement si c'est toi */
+    /* EDIT BTN */
     if (user.email === data.email) {
       const btn = document.getElementById("editBtn");
       btn.style.display = "flex";
@@ -34,12 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* STATUS */
     const dot = document.getElementById("statusDot");
-
-    if (data.online) {
-      dot.classList.add("status-online");
-    } else {
-      dot.classList.add("status-offline");
-    }
+    dot.classList.add(data.online ? "status-online" : "status-offline");
 
   });
 
