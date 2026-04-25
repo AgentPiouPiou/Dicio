@@ -37,22 +37,25 @@
 </header>
 
 <main>
-    <h1>Modifier Profil</h1>
+    <div class="edit-container">
 
-<div class="profile-image-container">
-  <img id="editPic">
-  <div class="edit-avatar" onclick="selectImage()">
-    <span id="icon-edit"></span>
+  <h1>Modifier Profil</h1>
+
+  <div class="profile-image-container">
+    <img id="editPic">
+    <div class="edit-avatar" onclick="selectImage()">
+      <span id="icon-edit"></span>
+    </div>
   </div>
+
+  <input id="usernameInput" class="input">
+  <input id="idInput" class="input">
+
+  <button class="save-btn" onclick="save()">Sauvegarder</button>
+
+  <input type="file" id="fileInput" hidden>
+
 </div>
-
-<input id="usernameInput" class="input" placeholder="Pseudo (max 12)">
-<input id="idInput" class="input" placeholder="ID (max 12)">
-
-<br>
-<button class="save-btn" onclick="save()">Sauvegarder</button>
-
-<input type="file" id="fileInput" hidden>
 </main>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>

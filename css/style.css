@@ -16,6 +16,7 @@
 
 *{
     transition: background 0.15s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body{
@@ -23,6 +24,13 @@ body{
     font-family:"Inter", Arial, sans-serif;
     background:#fdfcfb;
     color:#111;
+}
+
+/* empêcher texte bleu mobile */
+
+a, button, div, span{
+    color:inherit;
+    text-decoration:none;
 }
 
 /* =========================
@@ -41,6 +49,7 @@ header{
     background:rgba(255,255,255,0.75);
     backdrop-filter:blur(15px);
     box-shadow:0 1px 8px rgba(0,0,0,0.08);
+    z-index:1000;
 }
 
 /* =========================
@@ -76,7 +85,6 @@ header{
 
 .nav-button:hover{
     background:rgba(0,0,0,0.06);
-    transform:scale(1.03);
 }
 
 /* =========================
@@ -87,7 +95,7 @@ header{
     font-size:14px;
 }
 
-/* zoom léger texte */
+/* zoom léger */
 .nav-button:hover .account-name{
     transform:scale(1.05);
 }
@@ -103,12 +111,12 @@ header{
     object-fit:cover;
 }
 
-/* zoom léger */
+/* hover doux */
 .nav-button:hover .account-icon{
-    transform:scale(1.06);
+    transform:scale(1.05);
 }
 
-/* zoom plus fort direct */
+/* hover fort direct */
 .account-icon:hover{
     transform:scale(1.12);
 }
@@ -136,6 +144,7 @@ header{
     overflow:hidden;
     display:none;
     min-width:170px;
+    z-index:999;
 }
 
 .dropdown.active{
@@ -154,7 +163,7 @@ header{
     cursor:pointer;
 }
 
-/* plus de déplacement */
+/* hover sans déplacement */
 .item.black:hover{
     background:#f2f2f2;
 }
@@ -174,10 +183,11 @@ header{
 .icon-svg{
     width:18px;
     height:18px;
+    display:inline-block;
 }
 
 /* =========================
-   MAIN (aligné header)
+   MAIN
 ========================= */
 
 main{
@@ -190,6 +200,7 @@ main{
 
 #welcome{
     font-size:26px;
+    font-weight:400; /* PAS GRAS */
     animation:fadeInUp 0.4s ease;
 }
 
@@ -216,8 +227,108 @@ main{
     border:2px solid rgba(0,0,0,0.1);
 }
 
+.profile-info h2{
+    margin:0;
+}
+
 .profile-info p{
     color:gray;
+    font-size:14px;
+}
+
+/* =========================
+   EDIT BUTTON
+========================= */
+
+.edit-btn{
+    position:absolute;
+    top:0;
+    right:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:10px;
+    background:#f2f2f2;
+    cursor:pointer;
+}
+
+.edit-btn:hover{
+    background:#e6e6e6;
+}
+
+/* =========================
+   PROFILE EDIT PAGE
+========================= */
+
+.edit-container{
+    margin:60px 120px;
+    max-width:500px;
+}
+
+/* IMAGE */
+
+.profile-image-container{
+    position:relative;
+    width:120px;
+    height:120px;
+}
+
+.profile-image-container img{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+/* bouton pinceau */
+
+.edit-avatar{
+    position:absolute;
+    bottom:-6px;
+    right:-6px;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    cursor:pointer;
+}
+
+.edit-avatar:hover{
+    transform:scale(1.1);
+}
+
+/* INPUT */
+
+.input{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    font-size:14px;
+}
+
+/* SAVE BUTTON */
+
+.save-btn{
+    width:100%;
+    margin-top:25px;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:#111;
+    color:white;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.save-btn:hover{
+    opacity:0.9;
 }
 
 /* =========================
