@@ -1,43 +1,36 @@
 auth.onAuthStateChanged(async (user) => {
 
   if (!user) {
-    window.location.href = "/Dicio/login.html";
+    location.href = "/Dicio/login.html";
     return;
   }
 
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const userId = params.get("id");
 
-  if (!userId) {
-    document.body.innerHTML = "<h1>Profil introuvable</h1>";
-    return;
-  }
+  const snap = await db.collection("users")
+    .where("userId", "==", userId)
+    .get();
 
-  try {
-    const snap = await db.collection("users")
-      .where("userId", "==", userId)
-      .get();
+  if (snap.empty) return;
 
-    if (snap.empty) {
-      document.body.innerHTML = "<h1>Utilisateur introuvable</h1>";
-      return;
-    }
+  const data = snap.docs[0].data();
 
-    const data = snap.docs[0].data();
+  document.getElementById("profilePic").src = data.photoURL;
+  document.getElementById("profileName").textContent = data.username;
+  document.getElementById("profileId").textContent = data.userId;
 
-    // HEADER
-    const headerName = document.getElementById("userName");
-    const headerPhoto = document.getElementById("userPhoto");
+  // header
+  document.getElementById("userPhoto").src = user.photoURL;
+  document.getElementById("userName").textContent = user.displayName;
 
-    if (headerName) headerName.textContent = user.displayName;
-    if (headerPhoto) headerPhoto.src = user.photoURL;
+  // bouton modifier si c'est toi
+  if (user.email === data.email) {
+    const btn = document.getElementById("editBtn");
+    btn.style.display = "flex";
 
-    // PROFIL
-    document.getElementById("profilePic").src = data.photoURL;
-    document.getElementById("profileName").textContent = data.username;
-    document.getElementById("profileId").textContent = data.userId;
-
-  } catch (e) {
-    console.error(e);
+    btn.onclick = () => {
+      location.href = "/Dicio/profile-edit.html";
+    };
   }
 });
