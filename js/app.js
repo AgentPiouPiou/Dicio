@@ -14,23 +14,13 @@ function goProfile() {
 }
 
 function logout() {
-
-  const user = auth.currentUser;
-
-  if (user) {
-    db.collection("users").doc(user.email).set({
-      online: false,
-      lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-  }
-
   auth.signOut().then(() => {
     window.location.href = "/Dicio/login.html";
   });
 }
 
 /* ======================
-   LOGIN GOOGLE
+   LOGIN
 ====================== */
 
 function login() {
@@ -39,7 +29,7 @@ function login() {
 }
 
 /* ======================
-   MENU DROPDOWN
+   MENU
 ====================== */
 
 function toggleMenu(e) {
@@ -80,7 +70,7 @@ function setAvatar(img, url) {
 }
 
 /* ======================
-   HEADER
+   🔥 HEADER (FIX IMPORTANT)
 ====================== */
 
 function renderHeader(data) {
@@ -111,7 +101,9 @@ function renderWelcome(data) {
 
 async function generateUniqueUserId(name) {
 
-  let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  let base = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
 
   if (!base) base = "user";
 
@@ -134,7 +126,7 @@ async function generateUniqueUserId(name) {
 }
 
 /* ======================
-   CREATE USER IF NOT EXISTS
+   SAVE / CREATE USER
 ====================== */
 
 async function saveUserIfNeeded(user) {
@@ -142,8 +134,12 @@ async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
 
-  if (snap.exists) return snap.data();
+  // 🔥 EXISTE DÉJÀ
+  if (snap.exists) {
+    return snap.data();
+  }
 
+  // 🔥 CRÉATION
   const userId = await generateUniqueUserId(user.displayName);
 
   const data = {
@@ -151,9 +147,7 @@ async function saveUserIfNeeded(user) {
     username: user.displayName,
     displayName: user.displayName,
     photoURL: user.photoURL,
-    userId: userId,
-    online: true,
-    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    userId: userId
   };
 
   await ref.set(data);
@@ -162,22 +156,27 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   ONLINE STATUS FIX
+   🔥 REFRESH USER (IMPORTANT)
 ====================== */
 
-function setOnlineStatus(state) {
+async function refreshUser() {
 
-  const user = auth.currentUser;
-  if (!user) return;
+  if (!auth.currentUser) return;
 
-  return db.collection("users").doc(user.email).set({
-    online: state,
-    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+  const snap = await db.collection("users")
+    .doc(auth.currentUser.email)
+    .get();
+
+  if (!snap.exists) return;
+
+  currentUserData = snap.data();
+
+  renderHeader(currentUserData);
+  renderWelcome(currentUserData);
 }
 
 /* ======================
-   AUTH FLOW
+   AUTH FLOW FIXÉ
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -189,32 +188,17 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  // création si besoin
+  // 🔥 récup / création user FIRESTORE
   currentUserData = await saveUserIfNeeded(user);
 
-  // récupération Firestore (source unique)
-  const snap = await db.collection("users").doc(user.email).get();
+  // 🔥 IMPORTANT : ON UTILISE FIRESTORE, PAS GOOGLE AUTH DIRECT
+  const snap = await db.collection("users")
+    .doc(user.email)
+    .get();
+
   currentUserData = snap.data();
 
-  // UI
+  // 🔥 UI
   renderHeader(currentUserData);
   renderWelcome(currentUserData);
-
-  // ONLINE = TRUE
-  await setOnlineStatus(true);
-});
-
-/* ======================
-   OFFLINE CLEAN EXIT
-====================== */
-
-window.addEventListener("beforeunload", () => {
-
-  const user = auth.currentUser;
-  if (!user) return;
-
-  db.collection("users").doc(user.email).set({
-    online: false,
-    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
 });
