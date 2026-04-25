@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Accueil - Dicio</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="center">
+
+  <h1 id="welcome"></h1>
+
+  <button onclick="logout()">Se déconnecter</button>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <script type="module">
+    import { protectPage, logout } from "./js/auth.js";
+
+    window.logout = logout;
+
+    protectPage((user) => {
+      document.getElementById("welcome").textContent =
+        "Bienvenue " + user.displayName + " sur Dicio !";
+    });
+  </script>
+
+</body>
+</html>

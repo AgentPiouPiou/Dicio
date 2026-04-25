@@ -1,55 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr" translate="no">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="google" content="notranslate">
   <title>Dicio</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="/css/app.css">
 </head>
-
 <body>
 
-<header>
-  <div class="logo" onclick="goHome()">Dicio</div>
-
-  <button class="nav-button" onclick="toggleMenu(event)">
-    <img id="userPhoto" class="account-icon">
-    <span id="userName"></span>
-
-    <svg class="icon-svg" viewBox="0 0 24 24">
-      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor"/>
-    </svg>
-
-    <div class="dropdown" id="dropdown">
-
-      <div class="item black" onclick="goProfile()">
-        <span id="icon-user"></span>
-        <span>Profil</span>
-      </div>
-
-      <div class="item red" onclick="logout()">
-        <span id="icon-logout"></span>
-        <span>Déconnexion</span>
-      </div>
-
-    </div>
-  </button>
-</header>
-
-<main>
-  <h1 id="welcome">Bienvenue 👋</h1>
-</main>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
-
-<!-- App -->
-<script type="module" src="/js/app.js"></script>
+<script type="module">
+  import { checkAuthAndRedirect } from "./js/router.js";
+  checkAuthAndRedirect();
+</script>
 
 </body>
 </html>

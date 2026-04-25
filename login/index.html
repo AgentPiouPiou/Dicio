@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion - Dicio</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="center">
+
+  <h1>Dicio</h1>
+
+  <button id="loginBtn">Se connecter avec Google</button>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <script type="module">
+    import { loginWithGoogle, redirectIfLogged } from "/js/auth.js";
+
+    redirectIfLogged();
+
+    document.getElementById("loginBtn").onclick = loginWithGoogle;
+  </script>
+
+</body>
+</html>
