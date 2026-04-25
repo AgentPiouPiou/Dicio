@@ -1,8 +1,12 @@
 let userData = null;
 
-const input = document.getElementById("usernameInput");
+const usernameInput = document.getElementById("usernameInput");
+const idInput = document.getElementById("idInput");
+
+const usernameCount = document.getElementById("usernameCount");
+const idCount = document.getElementById("idCount");
+
 const saveBtn = document.getElementById("saveBtn");
-const charCount = document.getElementById("charCount");
 const successMsg = document.getElementById("successMsg");
 
 /* LOAD USER */
@@ -18,27 +22,37 @@ auth.onAuthStateChanged(async (user) => {
 
   document.getElementById("editPic").src = userData.photoURL;
 
-  input.value = userData.username;
+  // ✅ PRÉREMPLI
+  usernameInput.value = userData.username;
+  idInput.value = userData.userId;
 
   updateUI();
 });
 
-/* INPUT LOGIC */
+/* INPUT EVENTS */
 
-input.addEventListener("input", updateUI);
+usernameInput.addEventListener("input", updateUI);
+idInput.addEventListener("input", updateUI);
 
 function updateUI(){
 
-  const value = input.value;
+  const username = usernameInput.value;
+  const userId = idInput.value;
 
-  charCount.textContent = value.length + "/12";
+  usernameCount.textContent = username.length + "/12";
+  idCount.textContent = userId.length + "/12";
 
-  // active bouton si changement
-  if (value !== userData.username && value.length > 0 && value.length <= 12){
-    saveBtn.disabled = false;
-  } else {
-    saveBtn.disabled = true;
-  }
+  const changed =
+    username !== userData.username ||
+    userId !== userData.userId;
+
+  const valid =
+    username.length > 0 &&
+    username.length <= 12 &&
+    userId.length > 0 &&
+    userId.length <= 12;
+
+  saveBtn.disabled = !(changed && valid);
 }
 
 /* SAVE */
@@ -48,35 +62,56 @@ saveBtn.addEventListener("click", async () => {
   const user = auth.currentUser;
   if (!user) return;
 
-  const newUsername = input.value.trim();
+  let newUsername = usernameInput.value.trim();
+  let newUserId = idInput.value.trim().toLowerCase();
 
-  if (!newUsername || newUsername.length > 12) return;
+  // nettoyage ID
+  newUserId = newUserId.replace(/[^a-z0-9]/g, "");
 
-  /* historique */
+  /* CHECK ID UNIQUE */
+  if (newUserId !== userData.userId) {
+
+    const check = await db.collection("users")
+      .where("userId", "==", newUserId)
+      .get();
+
+    if (!check.empty) {
+      alert("ID déjà utilisé");
+      return;
+    }
+  }
+
+  /* HISTORY */
   await db.collection("users")
     .doc(user.email)
     .collection("history")
     .add({
       oldUsername: userData.username,
       newUsername: newUsername,
+      oldUserId: userData.userId,
+      newUserId: newUserId,
       date: new Date()
     });
 
-  /* update */
+  /* UPDATE FIREBASE */
   await db.collection("users")
     .doc(user.email)
     .update({
-      username: newUsername
+      username: newUsername,
+      userId: newUserId
     });
 
-  /* UI feedback */
+  /* UI */
   successMsg.classList.add("show");
 
+  /* UPDATE LOCAL */
   userData.username = newUsername;
+  userData.userId = newUserId;
+
   updateUI();
 
-  /* retour auto */
+  /* REDIRECT */
   setTimeout(() => {
-    location.href = "/Dicio/profile.html?id=" + userData.userId;
+    location.href = "/Dicio/profile.html?id=" + newUserId;
   }, 800);
 });
