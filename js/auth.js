@@ -1,35 +1,42 @@
-import { auth, provider } from "./firebase.js";
+let authChecked = false;
 
-/* LOGIN */
+/* LOGIN GOOGLE */
 export function loginWithGoogle() {
   auth.signInWithPopup(provider).then(() => {
     window.location.href = "/Dicio/";
   });
 }
 
-/* LOGOUT */
-export function logout() {
-  auth.signOut().then(() => {
-    window.location.href = "/Dicio/login/";
-  });
-}
-
-/* SI DEJA CONNECTE → ACCUEIL */
+/* REDIRECTION LOGIN */
 export function redirectIfLogged() {
+
   auth.onAuthStateChanged((user) => {
+
+    if (authChecked) return; // 🔥 empêche boucle
+    authChecked = true;
+
     if (user) {
       window.location.href = "/Dicio/";
     }
+
   });
+
 }
 
-/* PROTEGER PAGE */
+/* PROTECTION PAGE */
 export function protectPage(callback) {
+
   auth.onAuthStateChanged((user) => {
+
+    if (authChecked) return; // 🔥 empêche boucle
+    authChecked = true;
+
     if (!user) {
       window.location.href = "/Dicio/login/";
     } else {
       callback(user);
     }
+
   });
+
 }
