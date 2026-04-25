@@ -56,7 +56,7 @@ function loadIcons() {
 document.addEventListener("DOMContentLoaded", loadIcons);
 
 /* ======================
-   AVATAR
+   AVATAR SAFE
 ====================== */
 
 function setAvatar(img, url) {
@@ -70,26 +70,28 @@ function setAvatar(img, url) {
 }
 
 /* ======================
-   HEADER
+   🔥 HEADER (FIX IMPORTANT)
 ====================== */
 
-function renderHeader(user) {
-  setAvatar(document.getElementById("userPhoto"), user.photoURL);
+function renderHeader(data) {
 
+  const photo = document.getElementById("userPhoto");
   const name = document.getElementById("userName");
-  if (name) name.textContent = user.displayName || "Utilisateur";
+
+  if (photo) setAvatar(photo, data.photoURL);
+  if (name) name.textContent = data.username || "Utilisateur";
 }
 
 /* ======================
    WELCOME
 ====================== */
 
-function renderWelcome(user) {
+function renderWelcome(data) {
+
   const welcome = document.getElementById("welcome");
 
   if (welcome) {
-    const name = user.displayName || "Utilisateur";
-    welcome.textContent = `Bienvenue ${name} sur Dicio !`;
+    welcome.textContent = `Bienvenue ${data.username} sur Dicio !`;
   }
 }
 
@@ -103,10 +105,13 @@ async function generateUniqueUserId(name) {
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "");
 
+  if (!base) base = "user";
+
   let id = base;
   let i = 1;
 
   while (true) {
+
     const snap = await db.collection("users")
       .where("userId", "==", id)
       .get();
@@ -121,7 +126,7 @@ async function generateUniqueUserId(name) {
 }
 
 /* ======================
-   FIRESTORE
+   SAVE / CREATE USER
 ====================== */
 
 async function saveUserIfNeeded(user) {
@@ -129,8 +134,12 @@ async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
 
-  if (snap.exists) return snap.data();
+  // 🔥 EXISTE DÉJÀ
+  if (snap.exists) {
+    return snap.data();
+  }
 
+  // 🔥 CRÉATION
   const userId = await generateUniqueUserId(user.displayName);
 
   const data = {
@@ -142,11 +151,32 @@ async function saveUserIfNeeded(user) {
   };
 
   await ref.set(data);
+
   return data;
 }
 
 /* ======================
-   AUTH FLOW
+   🔥 REFRESH USER (IMPORTANT)
+====================== */
+
+async function refreshUser() {
+
+  if (!auth.currentUser) return;
+
+  const snap = await db.collection("users")
+    .doc(auth.currentUser.email)
+    .get();
+
+  if (!snap.exists) return;
+
+  currentUserData = snap.data();
+
+  renderHeader(currentUserData);
+  renderWelcome(currentUserData);
+}
+
+/* ======================
+   AUTH FLOW FIXÉ
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -158,8 +188,17 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  renderHeader(user);
-  renderWelcome(user);
-
+  // 🔥 récup / création user FIRESTORE
   currentUserData = await saveUserIfNeeded(user);
+
+  // 🔥 IMPORTANT : ON UTILISE FIRESTORE, PAS GOOGLE AUTH DIRECT
+  const snap = await db.collection("users")
+    .doc(user.email)
+    .get();
+
+  currentUserData = snap.data();
+
+  // 🔥 UI
+  renderHeader(currentUserData);
+  renderWelcome(currentUserData);
 });
