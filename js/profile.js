@@ -34,3 +34,24 @@ auth.onAuthStateChanged(async (user) => {
     };
   }
 });
+
+function loadProfile(userEmail) {
+
+  db.collection("users").doc(userEmail)
+    .onSnapshot((doc) => {
+
+      const data = doc.data();
+
+      document.getElementById("profilePic").src = data.photoURL;
+
+      const dot = document.getElementById("statusDot");
+
+      if (!dot) return;
+
+      if (data.online) {
+        dot.className = "status-dot status-online";
+      } else {
+        dot.className = "status-dot status-offline";
+      }
+    });
+}

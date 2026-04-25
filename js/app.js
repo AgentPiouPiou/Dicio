@@ -14,6 +14,16 @@ function goProfile() {
 }
 
 function logout() {
+
+  const user = auth.currentUser;
+
+  if (user) {
+    db.collection("users").doc(user.email).update({
+      online: false,
+      lastSeen: new Date()
+    });
+  }
+
   auth.signOut().then(() => {
     window.location.href = "/Dicio/login.html";
   });
@@ -56,21 +66,7 @@ function loadIcons() {
 document.addEventListener("DOMContentLoaded", loadIcons);
 
 /* ======================
-   AVATAR SAFE
-====================== */
-
-function setAvatar(img, url) {
-  if (!img) return;
-
-  img.src = url || "/img/default-avatar.png";
-
-  img.onerror = () => {
-    img.src = "/img/default-avatar.png";
-  };
-}
-
-/* ======================
-   🔥 HEADER (FIX IMPORTANT)
+   HEADER
 ====================== */
 
 function renderHeader(data) {
@@ -78,8 +74,10 @@ function renderHeader(data) {
   const photo = document.getElementById("userPhoto");
   const name = document.getElementById("userName");
 
-  if (photo) setAvatar(photo, data.photoURL);
-  if (name) name.textContent = data.username || "Utilisateur";
+  if (photo) photo.src = data.photoURL;
+  if (name) name.textContent = data.username;
+
+  // status dot header (optionnel)
 }
 
 /* ======================
@@ -87,7 +85,6 @@ function renderHeader(data) {
 ====================== */
 
 function renderWelcome(data) {
-
   const welcome = document.getElementById("welcome");
 
   if (welcome) {
@@ -101,10 +98,7 @@ function renderWelcome(data) {
 
 async function generateUniqueUserId(name) {
 
-  let base = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "");
-
+  let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (!base) base = "user";
 
   let id = base;
@@ -126,7 +120,7 @@ async function generateUniqueUserId(name) {
 }
 
 /* ======================
-   SAVE / CREATE USER
+   CREATE USER IF NEEDED
 ====================== */
 
 async function saveUserIfNeeded(user) {
@@ -134,12 +128,8 @@ async function saveUserIfNeeded(user) {
   const ref = db.collection("users").doc(user.email);
   const snap = await ref.get();
 
-  // 🔥 EXISTE DÉJÀ
-  if (snap.exists) {
-    return snap.data();
-  }
+  if (snap.exists) return snap.data();
 
-  // 🔥 CRÉATION
   const userId = await generateUniqueUserId(user.displayName);
 
   const data = {
@@ -147,7 +137,9 @@ async function saveUserIfNeeded(user) {
     username: user.displayName,
     displayName: user.displayName,
     photoURL: user.photoURL,
-    userId: userId
+    userId: userId,
+    online: true,
+    lastSeen: new Date()
   };
 
   await ref.set(data);
@@ -156,27 +148,22 @@ async function saveUserIfNeeded(user) {
 }
 
 /* ======================
-   🔥 REFRESH USER (IMPORTANT)
+   ONLINE STATUS
 ====================== */
 
-async function refreshUser() {
+async function setOnlineStatus(state) {
 
-  if (!auth.currentUser) return;
+  const user = auth.currentUser;
+  if (!user) return;
 
-  const snap = await db.collection("users")
-    .doc(auth.currentUser.email)
-    .get();
-
-  if (!snap.exists) return;
-
-  currentUserData = snap.data();
-
-  renderHeader(currentUserData);
-  renderWelcome(currentUserData);
+  await db.collection("users").doc(user.email).update({
+    online: state,
+    lastSeen: new Date()
+  });
 }
 
 /* ======================
-   AUTH FLOW FIXÉ
+   AUTH FLOW
 ====================== */
 
 auth.onAuthStateChanged(async (user) => {
@@ -188,17 +175,33 @@ auth.onAuthStateChanged(async (user) => {
     return;
   }
 
-  // 🔥 récup / création user FIRESTORE
   currentUserData = await saveUserIfNeeded(user);
 
-  // 🔥 IMPORTANT : ON UTILISE FIRESTORE, PAS GOOGLE AUTH DIRECT
-  const snap = await db.collection("users")
-    .doc(user.email)
-    .get();
-
+  const snap = await db.collection("users").doc(user.email).get();
   currentUserData = snap.data();
 
-  // 🔥 UI
   renderHeader(currentUserData);
   renderWelcome(currentUserData);
+
+  await setOnlineStatus(true);
+});
+
+/* ======================
+   OFFLINE ON CLOSE
+====================== */
+
+window.addEventListener("beforeunload", () => {
+
+  const user = auth.currentUser;
+  if (!user) return;
+
+  navigator.sendBeacon(
+    "offline",
+    JSON.stringify({ email: user.email })
+  );
+
+  db.collection("users").doc(user.email).update({
+    online: false,
+    lastSeen: new Date()
+  });
 });

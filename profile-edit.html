@@ -8,33 +8,17 @@
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo" onclick="goHome()">Dicio</div>
 
-  <button class="nav-button" onclick="toggleMenu(event)">
+  <button class="nav-button">
     <img id="userPhoto" class="account-icon">
     <span id="userName"></span>
-
-    <svg class="chevron-icon" viewBox="0 0 24 24">
-      <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor"/>
-    </svg>
-
-    <div class="dropdown" id="dropdown">
-
-      <div class="item black" onclick="goProfile()">
-        <span id="icon-user"></span>
-        <span>Profil</span>
-      </div>
-
-      <div class="item red" onclick="logout()">
-        <span id="icon-logout"></span>
-        <span>Déconnexion</span>
-      </div>
-
-    </div>
   </button>
 </header>
 
+<!-- PAGE -->
 <div class="edit-container">
 
   <h1>Modifier le profil</h1>
@@ -42,55 +26,40 @@
   <div class="edit-card">
 
     <!-- PHOTO -->
-    <img id="editPic" class="edit-avatar-big" src="">
+    <div class="profile-image-container">
+      <img id="editPic">
+
+      <div class="edit-avatar" onclick="document.getElementById('fileInput').click()">
+        📸
+      </div>
+    </div>
+
+    <input type="file" id="fileInput" hidden>
 
     <!-- PSEUDO -->
-    <div class="input-group">
-      <label>Pseudo</label>
-
-      <input 
-        id="usernameInput" 
-        class="input" 
-        maxlength="12"
-      >
-
-      <div class="input-info">
-        <span id="usernameCount">0/12</span>
-      </div>
-    </div>
+    <input id="usernameInput" class="input" maxlength="20">
 
     <!-- ID -->
-    <div class="input-group">
-      <label>ID</label>
+    <input id="idInput" class="input" maxlength="20">
 
-      <input 
-        id="idInput" 
-        class="input" 
-        maxlength="12"
-      >
-
-      <div class="input-info">
-        <span id="idCount">0/12</span>
-      </div>
-    </div>
-
-    <!-- BOUTON -->
-    <button id="saveBtn" class="save-btn" disabled>
+    <!-- SAVE -->
+    <button id="saveBtn" class="save-btn">
       Sauvegarder
     </button>
 
     <div id="successMsg" class="success-msg">
-      Modifications enregistrées ✔
+      Sauvegardé ✔
     </div>
 
   </div>
 
 </div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
 <script src="js/firebase.js"></script>
 <script src="js/profile-edit.js"></script>

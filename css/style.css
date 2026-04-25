@@ -279,12 +279,24 @@ main{
 
 /* avatar */
 
-.edit-avatar-big{
-    width:90px;
-    height:90px;
+
+.edit-avatar{
+    position:absolute;
+    bottom:-8px;
+    right:-8px;
+    width:35px;
+    height:35px;
+    background:white;
     border-radius:50%;
-    object-fit:cover;
-    margin-bottom:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    cursor:pointer;
+}
+
+.edit-avatar:hover{
+    transform:scale(1.1);
 }
 
 /* input */
@@ -368,4 +380,37 @@ main{
         opacity:1;
         transform:translateY(0);
     }
+}
+
+
+/* ======================
+   PROFILE IMAGE CONTAINER
+====================== */
+
+.profile-image-container{
+    position:relative;
+}
+
+/* ======================
+   STATUS DOT
+====================== */
+
+.status-dot{
+    position:absolute;
+    bottom:6px;
+    right:6px;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    border:3px solid white;
+}
+
+/* ONLINE */
+.status-online{
+    background:#2ecc71;
+}
+
+/* OFFLINE */
+.status-offline{
+    background:#e74c3c;
 }
