@@ -11,7 +11,6 @@ observeAuth((user) => {
       return;
     }
 
-    // On est sur la bonne page
     initLoginPage();
     return;
   }
@@ -22,6 +21,5 @@ observeAuth((user) => {
     return;
   }
 
-  // On est sur la bonne page
   initHomePage(user);
 });
