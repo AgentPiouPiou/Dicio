@@ -1,23 +1,15 @@
 const BASE_PATH = "/Dicio";
 
 /**
- * Redirige vers une page en tenant compte du basePath GitHub Pages
- * @param {string} path - ex: "/home.html"
+ * Redirection simple et fiable
  */
-export function redirectTo(path) {
-  window.location.href = `${BASE_PATH}${path}`;
+export function goTo(page) {
+  window.location.href = BASE_PATH + page;
 }
 
 /**
- * Retourne le chemin courant SANS le basePath
- * ex: "/Dicio/home.html" → "/home.html"
+ * Vérifie si on est sur une page précise
  */
-export function getCurrentPath() {
-  const fullPath = window.location.pathname;
-
-  if (fullPath.startsWith(BASE_PATH)) {
-    return fullPath.replace(BASE_PATH, "") || "/index.html";
-  }
-
-  return fullPath;
+export function isOn(page) {
+  return window.location.pathname.endsWith(page);
 }

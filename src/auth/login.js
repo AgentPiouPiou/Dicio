@@ -5,9 +5,8 @@ const provider = new GoogleAuthProvider();
 
 export async function loginWithGoogle() {
   try {
-    const result = await signInWithPopup(auth, provider);
-    console.log("Utilisateur connecté :", result.user);
+    await signInWithPopup(auth, provider);
   } catch (error) {
-    console.error("Erreur login :", error);
+    console.error(error);
   }
 }
