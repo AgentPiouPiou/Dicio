@@ -17,8 +17,8 @@ observeAuth((user) => {
   }
 
   // ✅ Utilisateur connecté
-  if (currentPath !== "/home.html") {
-    redirectTo("/home.html");
+  if (currentPath !== "/Dicio/home.html") {
+    redirectTo("/Dicio/home.html");
   } else {
     initHomePage(user);
   }
