@@ -1,11 +1,9 @@
 // ==============================
-// 🔐 GESTION AUTHENTIFICATION
+// 🔐 AUTH + USER SYSTEM
 // ==============================
 
-// Import auth depuis firebase.js
-import { auth } from "./firebase.js";
+import { auth, db, doc, getDoc, setDoc, collection, query, where, getDocs } from "./firebase.js";
 
-// Import fonctions Firebase Auth
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -13,44 +11,102 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Création du provider Google
+// ==============================
+// VARIABLES
+// ==============================
+let currentUserData = null;
+
 const provider = new GoogleAuthProvider();
 
 // ==============================
-// 🔑 CONNEXION GOOGLE
+// LOGIN
 // ==============================
 export function loginWithGoogle() {
-  // On lance la popup Google
   signInWithPopup(auth, provider)
     .then(() => {
-      // Une fois connecté → redirection
       window.location.href = "accueil.html";
-    })
-    .catch((error) => {
-      console.error("Erreur de connexion :", error);
     });
 }
 
 // ==============================
-// 🚪 DÉCONNEXION
+// LOGOUT
 // ==============================
 export function logoutUser() {
-  signOut(auth)
-    .then(() => {
-      // Une fois déconnecté → retour login
-      window.location.href = "login.html";
-    })
-    .catch((error) => {
-      console.error("Erreur de déconnexion :", error);
-    });
+  signOut(auth).then(() => {
+    window.location.href = "login.html";
+  });
 }
 
 // ==============================
-// 👤 SURVEILLANCE UTILISATEUR
+// USER ID UNIQUE
+// ==============================
+async function generateUserId(name) {
+  let base = name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!base) base = "user";
+
+  let id = base;
+  let i = 1;
+
+  while (true) {
+    const q = query(collection(db, "users"), where("userId", "==", id));
+    const snap = await getDocs(q);
+
+    if (snap.empty) break;
+
+    id = base + i;
+    i++;
+  }
+
+  return id;
+}
+
+// ==============================
+// SAVE USER
+// ==============================
+async function saveUserIfNeeded(user) {
+  const ref = doc(db, "users", user.email);
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) return snap.data();
+
+  const userId = await generateUserId(user.displayName);
+
+  const data = {
+    email: user.email,
+    username: user.displayName,
+    photoURL: user.photoURL,
+    userId: userId
+  };
+
+  await setDoc(ref, data);
+  return data;
+}
+
+// ==============================
+// OBSERVER USER
 // ==============================
 export function onUserState(callback) {
-  // Permet d'exécuter du code quand l'utilisateur change
-  onAuthStateChanged(auth, (user) => {
-    callback(user);
+  onAuthStateChanged(auth, async (user) => {
+
+    if (!user) {
+      callback(null);
+      return;
+    }
+
+    currentUserData = await saveUserIfNeeded(user);
+
+    const ref = doc(db, "users", user.email);
+    const snap = await getDoc(ref);
+
+    currentUserData = snap.data();
+
+    callback(currentUserData);
   });
+}
+
+// ==============================
+// GET CURRENT USER
+// ==============================
+export function getCurrentUser() {
+  return currentUserData;
 }

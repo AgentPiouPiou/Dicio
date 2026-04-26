@@ -1,8 +1,7 @@
 // ==============================
-// 🧠 FICHIER PRINCIPAL
+// 🧠 MAIN APP
 // ==============================
 
-// Import fonctions auth
 import {
   loginWithGoogle,
   logoutUser,
@@ -10,75 +9,39 @@ import {
 } from "./auth.js";
 
 // ==============================
-// 📍 DÉTECTION DE LA PAGE
+// BOUTONS
 // ==============================
 
-// On récupère le nom de la page actuelle
-const path = window.location.pathname;
+document.getElementById("loginBtn")?.addEventListener("click", loginWithGoogle);
+document.getElementById("logoutBtn")?.addEventListener("click", logoutUser);
 
 // ==============================
-// 🔘 BOUTON LOGIN
+// AUTH STATE
 // ==============================
-const loginBtn = document.getElementById("loginBtn");
 
-if (loginBtn) {
-  loginBtn.addEventListener("click", () => {
-    loginWithGoogle();
-  });
-}
-
-// ==============================
-// 🔘 BOUTON LOGOUT
-// ==============================
-const logoutBtn = document.getElementById("logoutBtn");
-
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
-    logoutUser();
-  });
-}
-
-// ==============================
-// 👀 SURVEILLANCE UTILISATEUR
-// ==============================
 onUserState((user) => {
 
-  // ==========================
-  // 📄 PAGE INDEX
-  // ==========================
-  if (path.includes("index.html") || path === "/") {
-    if (user) {
-      window.location.href = "accueil.html";
-    } else {
+  const path = window.location.pathname;
+
+  // 🔒 PAS CONNECTÉ
+  if (!user) {
+    if (!path.includes("login.html")) {
       window.location.href = "login.html";
     }
+    return;
   }
 
-  // ==========================
-  // 📄 PAGE LOGIN
-  // ==========================
+  // 🔁 REDIRECTION LOGIN
   if (path.includes("login.html")) {
-    if (user) {
-      window.location.href = "accueil.html";
-    }
+    window.location.href = "accueil.html";
   }
 
-  // ==========================
-  // 📄 PAGE ACCUEIL
-  // ==========================
+  // 🏠 ACCUEIL
   if (path.includes("accueil.html")) {
-
-    // Si pas connecté → interdit
-    if (!user) {
-      window.location.href = "login.html";
-      return;
-    }
-
-    // Sinon on affiche le pseudo
     const welcome = document.getElementById("welcome");
 
     if (welcome) {
-      welcome.textContent = `Bienvenue ${user.displayName} sur Dicio !`;
+      welcome.textContent = `Bienvenue ${user.username} sur Dicio !`;
     }
   }
 
