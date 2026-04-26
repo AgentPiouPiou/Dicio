@@ -1,24 +1,25 @@
 import { observeAuth } from "./auth/authState.js";
-import { redirectTo } from "./router/router.js";
+import { redirectTo, getCurrentPath } from "./router/router.js";
 import { initLoginPage } from "./pages/loginPage.js";
 import { initHomePage } from "./pages/homePage.js";
 
-const currentPage = window.location.pathname;
+const currentPath = getCurrentPath();
 
 observeAuth((user) => {
+  // 🔒 Utilisateur NON connecté
   if (!user) {
-    // Pas connecté
-    if (currentPage !== "/index.html") {
+    if (currentPath !== "/index.html") {
       redirectTo("/index.html");
     } else {
       initLoginPage();
     }
+    return;
+  }
+
+  // ✅ Utilisateur connecté
+  if (currentPath !== "/home.html") {
+    redirectTo("/home.html");
   } else {
-    // Connecté
-    if (currentPage !== "/home.html") {
-      redirectTo("/home.html");
-    } else {
-      initHomePage(user);
-    }
+    initHomePage(user);
   }
 });
