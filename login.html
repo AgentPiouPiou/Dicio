@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Connexion - Dicio</title>
+</head>
+<body>
+
+<h1>Connexion à Dicio</h1>
+<button id="loginBtn">Se connecter avec Google</button>
+
+<script type="module">
+  import "./js/auth.js";
+  import { redirectIfLoggedIn } from "./js/guard.js";
+
+  redirectIfLoggedIn();
+</script>
+
+</body>
+</html>

@@ -1,34 +1,30 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Accueil - Dicio</title>
 </head>
 <body>
 
-<h1 id="welcome"></h1>
+<h1 id="welcomeText">Bienvenue sur Dicio !</h1>
 
-<button onclick="logout()">Logout</button>
-
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<button id="logoutBtn">Se déconnecter</button>
 
 <script type="module">
   import { auth } from "./js/firebase.js";
-  import { logout } from "./js/auth.js";
-  import { route } from "./js/router.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { requireAuth } from "./js/guard.js";
+  import "./js/logout.js";
 
-  window.logout = logout;
+  requireAuth();
 
-  route();
+  const welcomeText = document.getElementById("welcomeText");
 
-  auth.onAuthStateChanged((user) => {
+  onAuthStateChanged(auth, (user) => {
     if (user) {
-      document.getElementById("welcome").textContent =
-        "Bienvenue " + user.displayName + " sur Dicio !";
+      const pseudo = user.displayName;
+      welcomeText.textContent = `Bienvenue ${pseudo} sur Dicio !`;
     }
   });
-
 </script>
 
 </body>

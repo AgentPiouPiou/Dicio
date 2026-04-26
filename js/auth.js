@@ -1,14 +1,17 @@
-import { auth, provider } from "./firebase.js";
+import { auth } from "./firebase.js";
+import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-export function loginWithGoogle() {
-  auth.signInWithPopup(provider)
-    .then(() => {
-      window.location.href = "/Dicio/acceuil.html";
-    });
-}
+const provider = new GoogleAuthProvider();
 
-export function logout() {
-  auth.signOut().then(() => {
-    window.location.href = "/Dicio/login/";
+const loginBtn = document.getElementById("loginBtn");
+
+if (loginBtn) {
+  loginBtn.addEventListener("click", async () => {
+    try {
+      await signInWithPopup(auth, provider);
+      window.location.href = "accueil.html";
+    } catch (error) {
+      console.error("Erreur connexion :", error);
+    }
   });
 }
