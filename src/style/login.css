@@ -7,16 +7,15 @@
 
 /* Base */
 body {
-  height: 100vh;
+  min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
   background: #f9fafb;
-  overflow: hidden;
 }
 
 /* Layout */
 .container {
   display: flex;
-  height: 100%;
+  min-height: 100vh;
 }
 
 /* LEFT */
@@ -32,8 +31,6 @@ body {
 
   text-align: center;
   padding: 40px;
-
-  animation: fadeInLeft 0.8s ease;
 }
 
 .left h1 {
@@ -41,8 +38,9 @@ body {
 }
 
 .left p {
-  margin-top: 15px;
-  opacity: 0.7;
+  margin-top: 12px;
+  opacity: 0.65;
+  max-width: 300px;
 }
 
 /* RIGHT */
@@ -51,75 +49,66 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  animation: fadeInRight 0.8s ease;
 }
 
 /* CARD */
 .card {
   background: white;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 36px;
+  border-radius: 16px;
+  border: 1px solid #eee; /* plus propre qu'une grosse ombre */
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 25px;
-
-  animation: pop 0.5s ease;
+  gap: 20px;
 }
 
 /* TITRE */
 .card h2 {
-  font-size: 28px;
+  font-size: 26px;
 }
 
 /* GOOGLE BUTTON */
 .login-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 
-  padding: 12px 20px;
-  border-radius: 12px;
+  padding: 12px 18px;
+  border-radius: 10px;
   border: 1px solid #ddd;
   background: white;
 
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition: background 0.15s ease, border 0.15s ease;
 }
 
 .login-btn img {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
-/* Hover */
+/* Hover (léger, sans mouvement) */
 .login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: #f3f4f6;
+  border-color: #ccc;
 }
 
-/* Animations */
-@keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+/* Active (feedback clic) */
+.login-btn:active {
+  background: #e5e7eb;
 }
 
-@keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+/* Focus (accessibilité) */
+.login-btn:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
 }
 
-@keyframes pop {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* Mobile */
+/* Responsive */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
