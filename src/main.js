@@ -1,9 +1,12 @@
-import { loginWithGoogle } from "./auth/login.js";
+import { loginWithGoogle, loginWithApple } from "./auth/login.js";
 
-const btn = document.getElementById("login-btn");
+const googleBtn = document.getElementById("login-btn");
+const appleBtn = document.getElementById("apple-btn");
 
-if (btn) {
-  btn.addEventListener("click", () => {
-    loginWithGoogle();
-  });
+if (googleBtn) {
+  googleBtn.addEventListener("click", loginWithGoogle);
+}
+
+if (appleBtn) {
+  appleBtn.addEventListener("click", loginWithApple);
 }
