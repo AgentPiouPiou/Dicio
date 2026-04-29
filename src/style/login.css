@@ -56,7 +56,7 @@ body {
   background: white;
   padding: 36px;
   border-radius: 16px;
-  border: 1px solid #eee; /* plus propre qu'une grosse ombre */
+  border: 1px solid #eee;
 
   display: flex;
   flex-direction: column;
@@ -91,18 +91,18 @@ body {
   height: 18px;
 }
 
-/* Hover (léger, sans mouvement) */
+/* Hover */
 .login-btn:hover {
   background: #f3f4f6;
   border-color: #ccc;
 }
 
-/* Active (feedback clic) */
+/* Active */
 .login-btn:active {
   background: #e5e7eb;
 }
 
-/* Focus (accessibilité) */
+/* Focus */
 .login-btn:focus-visible {
   outline: 2px solid #000;
   outline-offset: 2px;

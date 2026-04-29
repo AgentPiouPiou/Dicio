@@ -1,8 +1,6 @@
-// Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// ⚠️ Remplace avec ta config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDTVEsUH2U1Rmmk7Y45L8a9KjDwvFaNmmM",
   authDomain: "dicio-ea758.firebaseapp.com",
@@ -10,8 +8,5 @@ const firebaseConfig = {
   appId: "1:205631559932:web:3a8543f6fc446b2d97df79"
 };
 
-// Init Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-export { auth };
+export const auth = getAuth(app);

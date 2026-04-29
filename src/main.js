@@ -1,25 +1,9 @@
-import { observeAuth } from "./auth/authState.js";
-import { goTo, isOn } from "./router/router.js";
-import { initLoginPage } from "./pages/loginPage.js";
-import { initHomePage } from "./pages/homePage.js";
+import { loginWithGoogle } from "./auth/login.js";
 
-observeAuth((user) => {
-  // ❌ PAS CONNECTÉ
-  if (!user) {
-    if (!isOn("index.html")) {
-      goTo("/index.html");
-      return;
-    }
+const btn = document.getElementById("login-btn");
 
-    initLoginPage();
-    return;
-  }
-
-  // ✅ CONNECTÉ
-  if (!isOn("home.html")) {
-    goTo("/home.html");
-    return;
-  }
-
-  initHomePage(user);
-});
+if (btn) {
+  btn.addEventListener("click", () => {
+    loginWithGoogle();
+  });
+}
