@@ -7,20 +7,28 @@ import {
   signInWithRedirect
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-/* GOOGLE */
+/* =========================
+   GOOGLE LOGIN
+========================= */
 const googleProvider = new GoogleAuthProvider();
 
 export async function loginWithGoogle() {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    console.log(result.user);
+
+    console.log("Google user:", result.user);
+
     window.location.href = "/Dicio/dashboard.html";
+
   } catch (error) {
-    console.error("Erreur Google :", error);
+    console.error("Google error:", error.code, error.message);
   }
 }
 
-/* APPLE */
+
+/* =========================
+   APPLE LOGIN (FIX STABLE)
+========================= */
 const appleProvider = new OAuthProvider("apple.com");
 
 appleProvider.addScope("email");
@@ -28,17 +36,23 @@ appleProvider.addScope("name");
 
 export async function loginWithApple() {
   try {
+
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+    // 📱 MOBILE → redirect obligatoire (Apple stable)
     if (isMobile) {
       await signInWithRedirect(auth, appleProvider);
-    } else {
-      const result = await signInWithPopup(auth, appleProvider);
-      console.log(result.user);
-      window.location.href = "/Dicio/dashboard.html";
+      return;
     }
 
+    // 💻 DESKTOP → popup
+    const result = await signInWithPopup(auth, appleProvider);
+
+    console.log("Apple user:", result.user);
+
+    window.location.href = "/Dicio/dashboard.html";
+
   } catch (error) {
-    console.error("Erreur Apple :", error.code, error.message);
+    console.error("Apple error:", error.code, error.message);
   }
 }

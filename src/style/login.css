@@ -1,4 +1,4 @@
-/* Reset */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
@@ -11,19 +11,23 @@ body {
   background: #f9fafb;
 }
 
+/* LAYOUT */
 .container {
   display: flex;
   min-height: 100vh;
 }
 
+/* LEFT */
 .left {
   flex: 1;
   background: #111;
   color: white;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   text-align: center;
   padding: 40px;
 }
@@ -38,6 +42,7 @@ body {
   max-width: 300px;
 }
 
+/* RIGHT */
 .right {
   flex: 1;
   display: flex;
@@ -45,6 +50,7 @@ body {
   align-items: center;
 }
 
+/* CARD */
 .card {
   background: white;
   padding: 36px;
@@ -63,6 +69,7 @@ body {
   text-align: center;
 }
 
+/* BUTTONS */
 .login-btn {
   display: flex;
   align-items: center;
@@ -76,23 +83,54 @@ body {
   border: 1px solid #ddd;
   background: white;
 
+  font-size: 15px;
   cursor: pointer;
+
+  transition: 0.15s ease;
 }
 
-/* icônes NON déformées */
+/* ICONS (IMPORTANT FIX) */
 .login-btn img {
   height: 20px;
   width: auto;
+  display: block;
 }
 
+/* HOVER */
+.login-btn:hover {
+  background: #f3f4f6;
+}
+
+/* ACTIVE */
+.login-btn:active {
+  transform: scale(0.98);
+}
+
+/* APPLE STYLE */
 .login-btn.apple {
   background: black;
   color: white;
   border: none;
 }
 
+.login-btn.apple:hover {
+  background: #222;
+}
+
+/* ACCESSIBILITY */
+.login-btn:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+/* MOBILE */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
+  }
+
+  .card {
+    margin: 20px;
+    padding: 24px;
   }
 }
