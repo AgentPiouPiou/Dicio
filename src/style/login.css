@@ -5,30 +5,25 @@
   box-sizing: border-box;
 }
 
-/* Base */
 body {
   min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
   background: #f9fafb;
 }
 
-/* Layout */
 .container {
   display: flex;
   min-height: 100vh;
 }
 
-/* LEFT */
 .left {
   flex: 1;
   background: #111;
   color: white;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   text-align: center;
   padding: 40px;
 }
@@ -43,7 +38,6 @@ body {
   max-width: 300px;
 }
 
-/* RIGHT */
 .right {
   flex: 1;
   display: flex;
@@ -51,7 +45,6 @@ body {
   align-items: center;
 }
 
-/* CARD */
 .card {
   background: white;
   padding: 36px;
@@ -60,20 +53,16 @@ body {
 
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   gap: 14px;
 
   width: 100%;
   max-width: 340px;
 }
 
-/* TITRE */
 .card h2 {
-  font-size: 26px;
   text-align: center;
 }
 
-/* BOUTONS */
 .login-btn {
   display: flex;
   align-items: center;
@@ -87,67 +76,23 @@ body {
   border: 1px solid #ddd;
   background: white;
 
-  font-size: 15px;
-  font-weight: 500;
-
   cursor: pointer;
-
-  transition: background 0.15s ease, border 0.15s ease, transform 0.05s ease;
 }
 
-/* icônes uniformes */
+/* icônes NON déformées */
 .login-btn img {
-  width: 20px;
   height: 20px;
+  width: auto;
 }
 
-/* Google hover */
-.login-btn:hover {
-  background: #f3f4f6;
-  border-color: #ccc;
-}
-
-/* Active */
-.login-btn:active {
-  transform: scale(0.98);
-  background: #e5e7eb;
-}
-
-/* Focus accessibilité */
-.login-btn:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
-
-/* APPLE */
 .login-btn.apple {
-  background: #000;
+  background: black;
   color: white;
   border: none;
 }
 
-.login-btn.apple:hover {
-  background: #222;
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-
   .container {
     flex-direction: column;
-  }
-
-  .left {
-    padding: 30px;
-  }
-
-  .card {
-    margin: 20px;
-    padding: 24px;
-  }
-
-  .login-btn {
-    padding: 16px;
-    font-size: 16px;
   }
 }
