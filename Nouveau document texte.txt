@@ -1,0 +1,42 @@
+Ajouts :
+1. Recherche de profil
+2. Liste d’amis
+3. Avatar customisable
+4. Cosmétiques
+5. Monnaie + Boutique
+6. Pass
+7. Jeux
+8. Clubs
+9. Événements
+10. Modération
+
+git add .
+git commit -m "commit"
+git push -u origin main
+
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/AgentPiouPiou/Dicio.git
+git push -u origin main
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDTVEsUH2U1Rmmk7Y45L8a9KjDwvFaNmmM",
+    authDomain: "dicio-ea758.firebaseapp.com",
+    projectId: "dicio-ea758",
+    storageBucket: "dicio-ea758.firebasestorage.app",
+    messagingSenderId: "205631559932",
+    appId: "1:205631559932:web:3a8543f6fc446b2d97df79"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
