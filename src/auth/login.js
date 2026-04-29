@@ -11,7 +11,7 @@ export async function loginWithGoogle() {
 
     console.log("User :", result.user);
 
-    window.location.href = "/dashboard.html";
+    window.location.href = "/Dicio/dashboard.html";
 
   } catch (error) {
     console.error(error.code, error.message);

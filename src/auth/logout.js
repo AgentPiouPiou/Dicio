@@ -4,7 +4,7 @@ import { signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-aut
 export async function logout() {
   try {
     await signOut(auth);
-    window.location.href = "/index.html";
+    window.location.href = "/Dicio/index.html";
   } catch (error) {
     console.error(error);
   }
