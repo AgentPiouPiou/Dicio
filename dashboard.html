@@ -1,34 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="src/style/login.css">
 </head>
 <body>
 
+<div class="card">
+
 <h1>Dashboard</h1>
 
-<p id="user-email"></p>
+<p id="pseudo"></p>
+<p id="username"></p>
+<p id="email"></p>
+<p id="phone"></p>
+<p id="gender"></p>
 
-<button id="logout-btn">Se déconnecter</button>
+<button id="logout" class="btn">Logout</button>
 
-<script type="module">
-  import { observeAuth } from "./src/auth/observer.js";
-  import { logout } from "./src/auth/logout.js";
-  import { protectPage } from "./src/auth/guard.js";
+</div>
 
-  protectPage();
-
-  const emailEl = document.getElementById("user-email");
-
-  observeAuth((user) => {
-    if (user) {
-      emailEl.textContent = user.email;
-    }
-  });
-
-  document.getElementById("logout-btn").addEventListener("click", logout);
-</script>
-
+<script type="module" src="./src/main.js"></script>
 </body>
 </html>

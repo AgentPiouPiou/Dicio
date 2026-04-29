@@ -1,18 +1,32 @@
-import { loginWithGoogle, loginWithApple } from "./auth/login.js";
-import { auth } from "./firebase/firebase.config.js";
-import { getRedirectResult } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { loginGoogle } from "./auth.js";
+import { auth, db } from "./firebase/config.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-document.getElementById("login-btn")
-  ?.addEventListener("click", loginWithGoogle);
+/* LOGIN BUTTON */
+document.getElementById("google-btn")
+?.addEventListener("click", loginGoogle);
 
-document.getElementById("apple-btn")
-  ?.addEventListener("click", loginWithApple);
+/* LOGOUT */
+document.getElementById("logout")
+?.addEventListener("click", async () => {
+await signOut(auth);
+window.location.href = "index.html";
+});
 
-/* 🔥 retour Apple redirect */
-getRedirectResult(auth)
-  .then((result) => {
-    if (result?.user) {
-      window.location.href = "/Dicio/dashboard.html";
-    }
-  })
-  .catch(console.error);
+/* DASHBOARD LOAD */
+onAuthStateChanged(auth, async (user) => {
+
+if (!user) return;
+
+const snap = await getDoc(doc(db, "users", user.uid));
+const data = snap.data();
+
+if (!data) return;
+
+document.getElementById("pseudo").textContent = data.pseudo;
+document.getElementById("username").textContent = data.username;
+document.getElementById("email").textContent = data.email;
+document.getElementById("phone").textContent = data.phone;
+document.getElementById("gender").textContent = data.gender;
+});
