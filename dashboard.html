@@ -2,21 +2,52 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard</title>
-<link rel="stylesheet" href="src/style/login.css">
+<title>Dicio | Accueil</title>
+<link rel="stylesheet" href="src/style/home.css">
 </head>
 <body>
 
-<div class="card">
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">Dicio</div>
+  <div id="user-name" class="user"></div>
+</header>
 
-<h1>Dashboard</h1>
+<!-- CONTENT -->
+<main class="main">
 
-<p id="user-name"></p>
-<p id="user-email"></p>
+  <h1 id="welcome"></h1>
 
-<button id="logout" class="login-btn">Se déconnecter</button>
+  <!-- GRID JEUX -->
+  <div class="games-grid">
 
-</div>
+    <div class="game-card">
+      <div class="thumb"></div>
+      <p>Jeu 1</p>
+      <span>Coming soon</span>
+    </div>
+
+    <div class="game-card">
+      <div class="thumb"></div>
+      <p>Jeu 2</p>
+      <span>Coming soon</span>
+    </div>
+
+    <div class="game-card">
+      <div class="thumb"></div>
+      <p>Jeu 3</p>
+      <span>Coming soon</span>
+    </div>
+
+    <div class="game-card">
+      <div class="thumb"></div>
+      <p>Jeu 4</p>
+      <span>Coming soon</span>
+    </div>
+
+  </div>
+
+</main>
 
 <script type="module" src="./src/main.js"></script>
 </body>
