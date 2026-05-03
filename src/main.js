@@ -6,35 +6,46 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/f
 document.getElementById("google-btn")
   ?.addEventListener("click", loginGoogle);
 
-/* AUTH STATE */
+/* AUTH */
 onAuthStateChanged(auth, (user) => {
 
-  if (!user && window.location.pathname.includes("dashboard")) {
-    window.location.href = "index.html";
+  const isLoginPage = window.location.pathname.includes("login");
+
+  if (!user && !isLoginPage) {
+    window.location.href = "/Dicio/login.html";
     return;
   }
 
   if (user) {
 
-    /* USER NAME */
     const name = user.displayName || "Joueur";
 
-    document.getElementById("user-name") &&
-      (document.getElementById("user-name").textContent = name);
+    /* USER NAME */
+    const userEl = document.getElementById("user-name");
+    if (userEl) userEl.textContent = name;
 
-    /* MESSAGE RANDOM */
+    /* WELCOME */
     const messages = [
-      `Bienvenue ${name} 👋`,
+      `Bienvenue ${name}`,
       `Content de te revoir ${name}`,
       `Prêt à jouer ${name} ?`,
-      `Bonne chance ${name} 🎮`,
+      `Bonne chance ${name}`,
       `Que la partie commence ${name}`
     ];
 
     const random = messages[Math.floor(Math.random() * messages.length)];
 
-    document.getElementById("welcome") &&
-      (document.getElementById("welcome").textContent = random);
+    const welcomeEl = document.getElementById("welcome");
+    if (welcomeEl) welcomeEl.textContent = random;
   }
-
 });
+
+/* DROPDOWN MENU */
+const userMenu = document.getElementById("user-menu");
+
+document.getElementById("user-name")?.addEventListener("click", () => {
+  userMenu?.classList.toggle("show");
+});
+
+/* LOGOUT CLICK */
+document.getElementById("logout")?.addEventListener("click", logoutUser);

@@ -2,34 +2,45 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Dicio | Connexion</title>
-<link rel="stylesheet" href="src/style/login.css">
+<title>Dicio</title>
+<link rel="stylesheet" href="src/style/home.css">
 </head>
 <body>
 
-<div class="container">
+<header class="header">
+  <div class="logo">Dicio</div>
 
-  <!-- LEFT -->
-  <div class="left">
-    <h1>Dicio</h1>
-    <p>Joue à tes jeux de société préférés en ligne.</p>
+  <div class="user-container">
+    <div id="user-name" class="user"></div>
+
+    <div id="user-menu" class="dropdown">
+      <div onclick="location.href='#'">Profil</div>
+      <div id="logout">Déconnexion</div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+<h1 id="welcome"></h1>
+
+<div class="games-grid">
+
+  <div class="game-card">
+    <div class="thumb"></div>
+    <p>Jeu</p>
+    <span>Coming soon</span>
   </div>
 
-  <!-- RIGHT -->
-  <div class="right">
-    <div class="card">
-
-      <h2>Connexion</h2>
-
-      <button id="google-btn" class="login-btn">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg">
-        Continuer avec Google
-      </button>
-
-    </div>
+  <div class="game-card">
+    <div class="thumb"></div>
+    <p>Jeu</p>
+    <span>Coming soon</span>
   </div>
 
 </div>
+
+</main>
 
 <script type="module" src="./src/main.js"></script>
 </body>
