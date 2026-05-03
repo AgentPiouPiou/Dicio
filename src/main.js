@@ -9,10 +9,10 @@ document.getElementById("google-btn")
 /* AUTH */
 onAuthStateChanged(auth, (user) => {
 
-  const isLoginPage = window.location.pathname.includes("login");
+  const isLogin = window.location.pathname.includes("/login");
 
-  if (!user && !isLoginPage) {
-    window.location.href = "/Dicio/login.html";
+  if (!user && !isLogin) {
+    window.location.href = "/Dicio/login";
     return;
   }
 
@@ -20,11 +20,11 @@ onAuthStateChanged(auth, (user) => {
 
     const name = user.displayName || "Joueur";
 
-    /* USER NAME */
-    const userEl = document.getElementById("user-name");
-    if (userEl) userEl.textContent = name;
+    /* BOUTON USER */
+    const btn = document.getElementById("user-btn");
+    if (btn) btn.textContent = name;
 
-    /* WELCOME */
+    /* MESSAGE */
     const messages = [
       `Bienvenue ${name}`,
       `Content de te revoir ${name}`,
@@ -35,17 +35,20 @@ onAuthStateChanged(auth, (user) => {
 
     const random = messages[Math.floor(Math.random() * messages.length)];
 
-    const welcomeEl = document.getElementById("welcome");
-    if (welcomeEl) welcomeEl.textContent = random;
+    const welcome = document.getElementById("welcome");
+    if (welcome) welcome.textContent = random;
   }
+
 });
 
-/* DROPDOWN MENU */
-const userMenu = document.getElementById("user-menu");
+/* DROPDOWN */
+const btn = document.getElementById("user-btn");
+const menu = document.getElementById("user-menu");
 
-document.getElementById("user-name")?.addEventListener("click", () => {
-  userMenu?.classList.toggle("show");
+btn?.addEventListener("click", () => {
+  menu?.classList.toggle("show");
 });
 
-/* LOGOUT CLICK */
-document.getElementById("logout")?.addEventListener("click", logoutUser);
+/* LOGOUT */
+document.getElementById("logout")
+  ?.addEventListener("click", logoutUser);

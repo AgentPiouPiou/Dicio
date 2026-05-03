@@ -9,14 +9,14 @@ const provider = new GoogleAuthProvider();
 
 /* LOGIN */
 export async function loginGoogle() {
-  const result = await signInWithPopup(auth, provider);
+  await signInWithPopup(auth, provider);
 
-  // 🔥 redirection vers HOME ROOT
   window.location.href = "/Dicio/";
 }
 
 /* LOGOUT */
 export async function logoutUser() {
   await signOut(auth);
-  window.location.href = "/Dicio/login.html";
+
+  window.location.href = "/Dicio/login";
 }
