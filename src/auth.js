@@ -1,24 +1,25 @@
-import { auth, db } from "./firebase/config.js";
+import { auth } from "./firebase/config.js";
 import {
-GoogleAuthProvider,
-signInWithPopup
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { generateUsername } from "./user.js";
-
-/* GOOGLE LOGIN */
-export async function loginGoogle() {
-
 const provider = new GoogleAuthProvider();
-const result = await signInWithPopup(auth, provider);
 
-await setDoc(doc(db, "users", result.user.uid), {
-pseudo: result.user.displayName,
-username: await generateUsername(result.user.displayName),
-email: result.user.email,
-provider: "google"
-});
+/* LOGIN */
+export async function loginGoogle() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log(result.user);
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-window.location.href = "dashboard.html";
+/* LOGOUT */
+export async function logoutUser() {
+  await signOut(auth);
+  window.location.href = "index.html";
 }

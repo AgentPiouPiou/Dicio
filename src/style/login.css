@@ -1,45 +1,88 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-font-family: sans-serif;
-background:#f5f5f5;
-margin:0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f9fafb;
 }
 
+/* LAYOUT */
 .container {
-display:flex;
-height:100vh;
+  display: flex;
+  min-height: 100vh;
 }
 
+/* LEFT */
 .left {
-flex:1;
-background:#111;
-color:white;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
+  flex: 1;
+  background: #111;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  padding: 40px;
 }
 
+.left h1 {
+  font-size: clamp(40px, 6vw, 70px);
+}
+
+.left p {
+  margin-top: 12px;
+  opacity: 0.7;
+}
+
+/* RIGHT */
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD */
 .card {
-margin:auto;
-padding:30px;
-background:white;
-border-radius:12px;
-width:300px;
+  background: white;
+  padding: 36px;
+  border-radius: 16px;
+  border: 1px solid #eee;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-.btn {
-width:100%;
-padding:12px;
-margin:6px 0;
-background:black;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
+/* BUTTON */
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+
+  cursor: pointer;
 }
 
-input, select {
-width:100%;
-padding:10px;
-margin:6px 0;
+.login-btn img {
+  width: 18px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
 }
